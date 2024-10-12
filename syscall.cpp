@@ -1,7 +1,7 @@
 #include "syscall.h"
 #include "util.h"
 
-int Socket(int __domain, int __type, int __protocol) {
+int CreateSocket(int __domain, int __type, int __protocol) {
     int ret = socket(__domain, __type, __protocol);
     errif(ret == -1, "socket create error");
     return ret;
@@ -45,6 +45,13 @@ int EpollCtl(int __epfd, int __op, int __fd, struct epoll_event* event) {
 
 int EpollWait(int __epfd, struct epoll_event *__events, int __maxevents, int __timeout) {
     int ret = epoll_wait(__epfd, __events, __maxevents, __timeout);
-    errif(ret == -1, "epoll wait error");
+    // reference: https://blog.csdn.net/Ilozk/article/details/90242543
+    errif(ret == -1 && errno != EINTR, "epoll wait error");
+    return ret;
+}
+
+int Close(int fd) {
+    int ret = close(fd);
+    errif(ret == -1, "close fd error");
     return ret;
 }
