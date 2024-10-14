@@ -2,22 +2,27 @@
 #define HEAD_CHANNEL
 
 #include <cstdint>
+#include <functional>
 
-class Epoll;
+class EventLoop;
 
 class Channel {
 private:
-    Epoll* epoll;
+    EventLoop* loop;
     int fd;
     uint32_t events;
     uint32_t revents;
     bool inEpoll;
+
+    std::function<void()> callback;
+
 public:
 
-    Channel(Epoll* _epoll, int _fd);
+    Channel(EventLoop* _loop, int _fd);
     ~Channel();
 
     void enableReading();
+    void handleEvent();
 
     int getFd();
 
@@ -31,6 +36,7 @@ public:
 
     void setRevents(uint32_t _revents);
 
+    void setCallback(std::function<void()>);
 };
 
 #endif
