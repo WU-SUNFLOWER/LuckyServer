@@ -1,6 +1,7 @@
 #include "Socket.h"
 #include "InetAddress.h"
 #include "Epoll.h"
+#include "Channel.h"
 #include <errno.h>
 
 #define READ_BUFFER 1024
@@ -41,15 +42,16 @@ int main() {
     servSocket.bind(servAddr);
     servSocket.listen();
 
-    Epoll epoll;
+    Epoll servEpoll;
     servSocket.setNonBlocking();
-    epoll.addFd(servSocket.getFd(), EPOLLIN | EPOLLET);
+
+    Channel servChannel(&servEpoll, servSocket.getFd());
+    servChannel.enableReading();
 
     while (true) {
-        std::vector<epoll_event> events = epoll.wait();
-        for (const epoll_event& cur_event: events) {
-            if (cur_event.data.fd == servSocket.getFd()) {
-
+        std::vector<Channel*> channels = servEpoll.wait();
+        for (Channel* channel: channels) {
+            if (channel->getFd() == servSocket.getFd()) {
                 InetAddress clientAddr;
                 Socket* clientSocket = new Socket(servSocket.accept(clientAddr));
 
@@ -60,14 +62,16 @@ int main() {
                 );
 
                 clientSocket->setNonBlocking();
-                epoll.addFd(clientSocket->getFd(), EPOLLIN | EPOLLET);
+
+                Channel* clientChannel = new Channel(&servEpoll, clientSocket->getFd());
+                clientChannel->enableReading();
             }
-            else if (cur_event.events & EPOLLIN) {
-                handleReadEvent(cur_event.data.fd);
+            else if (channel->getRevents() & EPOLLIN) {
+                handleReadEvent(channel->getFd());
             }
             else {
                 printf("something else happened\n");
-            }            
+            }
         }
     }
     

@@ -3,6 +3,7 @@
 
 #include <cstdint>
 #include <vector>
+#include "Channel.h"
 
 class Epoll {
 private:
@@ -11,8 +12,12 @@ private:
 public:
     Epoll();
     ~Epoll();
+    
     void addFd(int fd, uint32_t option);
-    std::vector<epoll_event> wait();
+    
+    std::vector<Channel*> wait(int timeout = -1);
+
+    void updateChannel(Channel* channel);
 };
 
 #endif
