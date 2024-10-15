@@ -3,22 +3,19 @@
 #define READ_BUFFER 1024
 
 Server::Server(EventLoop *_loop)
-    : loop(_loop)
+    : loop(_loop), acceptor(nullptr)
 {
-    Socket* servSocket = new Socket();
-    InetAddress servAddr("127.0.0.1", 8888);
-    servSocket->bind(servAddr);
-    servSocket->listen();
-    servSocket->setNonBlocking();
-
-    Channel* servChannel = new Channel(loop, servSocket->getFd());
-    std::function<void()> cb = std::bind(&Server::newConnection, this, servSocket);
-    servChannel->setCallback(cb);
-    servChannel->enableReading();
+    acceptor = new Acceptor(loop);
+    std::function<void(Socket*)> cb = std::bind(
+        &Server::newConnection, 
+        this, 
+        std::placeholders::_1
+    );
+    acceptor->setNewConnectionCallBack(cb);
 }
 
-Server::~Server()
-{
+Server::~Server() {
+    delete acceptor;
 }
 
 void Server::handleReadEvent(int client_socket_fd) {
