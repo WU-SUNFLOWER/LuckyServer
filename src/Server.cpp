@@ -3,6 +3,7 @@
 #include "Socket.h"
 #include "Acceptor.h"
 #include "Connection.h"
+#include "Channel.h"
 
 Server::Server(EventLoop *_loop)
     : loop(_loop), acceptor(nullptr)

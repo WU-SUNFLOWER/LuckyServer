@@ -3,6 +3,7 @@
 #include "Server.h"
 #include "Socket.h"
 #include "Buffer.h"
+#include "Channel.h"
 
 #define READ_BUFFER 1024
 
@@ -21,6 +22,8 @@ Connection::Connection(EventLoop *_loop, Socket *_socket)
 Connection::~Connection() {
     delete channel;
     delete socket;
+    delete inBuffer;
+    delete readBuffer;
 }
 
 void Connection::echo(int client_socket_fd) {

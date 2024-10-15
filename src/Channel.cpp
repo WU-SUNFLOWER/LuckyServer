@@ -19,7 +19,8 @@ void Channel::enableReading() {
 }
 
 void Channel::handleEvent() {
-    callback();
+    //callback();
+    loop->addTask(callback);
 }
 
 int Channel::getFd() {
