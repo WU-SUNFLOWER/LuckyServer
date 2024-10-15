@@ -30,7 +30,7 @@ void Server::newConnection(Socket* clientSocket) {
     connections[clientSocket->getFd()] = conn;
 }
 
-void Server::deleteConnection(Socket *socket) {
+void Server::deleteConnection(Socket* socket) {
     Connection* conn = connections[socket->getFd()];
     connections.erase(socket->getFd());
     delete conn;

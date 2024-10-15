@@ -1,6 +1,12 @@
 #include "syscall.h"
 #include "util.h"
 
+ssize_t Write(int __fd, const void *__buf, size_t __n) {
+    ssize_t ret = write(__fd, __buf, __n);
+    errif(ret == -1, "write error");
+    return ret;
+}
+
 int CreateSocket(int __domain, int __type, int __protocol) {
     int ret = socket(__domain, __type, __protocol);
     errif(ret == -1, "socket create error");

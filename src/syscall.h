@@ -23,4 +23,6 @@ int EpollCtl(int __epfd, int __op, int __fd, struct epoll_event* event);
 int EpollWait(int __epfd, struct epoll_event *__events, int __maxevents, int __timeout);
 int Close(int fd);
 
+ssize_t Write(int __fd, const void *__buf, size_t __n);
+
 #endif
