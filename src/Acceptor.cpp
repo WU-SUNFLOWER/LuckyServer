@@ -23,7 +23,17 @@ Acceptor::~Acceptor() {
 }
 
 void Acceptor::acceptConnection() {
-    newConnectionCallback(socket);
+    InetAddress clientAddr;
+    Socket* clientSocket = new Socket(socket->accept(clientAddr));
+    clientSocket->setNonBlocking();
+
+    printf("New client fd %d! From IP: %s Port: %d\n", 
+            clientSocket->getFd(), 
+            clientAddr.getIP().c_str(),
+            clientAddr.getPort()
+    );
+
+    newConnectionCallback(clientSocket);
 }
 
 void Acceptor::setNewConnectionCallBack(std::function<void(Socket *)> _cb) {
