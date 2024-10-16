@@ -1,25 +1,27 @@
-#ifndef HEAD_BUFFER
-#define HEAD_BUFFER
+#ifndef LUCKYSERVER_BUFFER_H_
+#define LUCKYSERVER_BUFFER_H_
 
 #include <string>
 
-class Buffer {
+class Buffer
+{
 private:
     std::string buf_;
+
 public:
     Buffer();
-    
+
     ~Buffer();
 
-    void Append(const char* kSrc, size_t size);
+    void Append(const char *kSrc, size_t size);
 
-    size_t Size();
+    size_t Size() const;
 
-    const char* C_str();
+    const char *Cstr();
 
     void Clear();
 
     void Getline();
 };
 
-#endif
+#endif // LUCKYSERVER_BUFFER_H_

@@ -1,9 +1,10 @@
 #include "acceptor.h"
 
 Acceptor::Acceptor(EventLoop *loop)
-    : loop_(loop)
+    : loop_(loop),
+      socket_(new Socket()),
+      accept_channel_(nullptr)
 {
-    socket_ = new Socket();
     address_ = {"127.0.0.1", 8888};
 
     socket_->Bind(address_);
@@ -11,9 +12,7 @@ Acceptor::Acceptor(EventLoop *loop)
     socket_->SetNonBlocking();
 
     accept_channel_ = new Channel(loop_, socket_->GetFd());
-    std::function<void()> cb = std::bind(&Acceptor::AcceptConnection, this);
-
-    accept_channel_->SetCallback(cb);
+    accept_channel_->SetCallback(std::bind(&Acceptor::AcceptConnection, this));
     accept_channel_->EnableReading();
 }
 
@@ -34,10 +33,13 @@ void Acceptor::AcceptConnection()
            client_address.GetIP().c_str(),
            client_address.GetPort());
 
-    NewConnectionCallback(client_socket);
+    if (new_connection_callback_)
+    {
+        new_connection_callback_(client_socket);
+    }
 }
 
 void Acceptor::SetNewConnectionCallBack(std::function<void(Socket *)> cb)
 {
-    NewConnectionCallback = cb;
+    new_connection_callback_ = cb;
 }

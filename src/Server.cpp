@@ -1,4 +1,5 @@
 #include "server.h"
+
 #include "event_loop.h"
 #include "socket.h"
 #include "acceptor.h"
@@ -19,6 +20,10 @@ Server::Server(EventLoop *loop)
 Server::~Server()
 {
     delete acceptor_;
+    for (auto &connection_pair : connections_)
+    {
+        delete connection_pair.second;
+    }
 }
 
 void Server::NewConnection(Socket *clientSocket)

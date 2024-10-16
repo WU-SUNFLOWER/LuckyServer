@@ -1,5 +1,5 @@
-#ifndef HEAD_SERVER
-#define HEAD_SERVER
+#ifndef LUCKYSERVER_SERVER_H_
+#define LUCKYSERVER_SERVER_H_
 
 #include <map>
 
@@ -8,19 +8,21 @@ class Acceptor;
 class Socket;
 class Connection;
 
-class Server {
+class Server
+{
 private:
-    EventLoop* loop_;
-    Acceptor* acceptor_;
-    std::map<int, Connection*> connections_;
+    EventLoop *loop_;
+    Acceptor *acceptor_;
+    std::map<int, Connection *> connections_;
+
 public:
-    Server(EventLoop* loop);
-    
+    Server(EventLoop *loop);
+
     ~Server();
 
-    void NewConnection(Socket* serv_sock);
+    void NewConnection(Socket *serv_sock);
 
-    void DeleteConnection(Socket*);
+    void DeleteConnection(Socket *socket);
 };
 
-#endif
+#endif // LUCKYSERVER_SERVER_H_

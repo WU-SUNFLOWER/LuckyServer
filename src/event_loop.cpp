@@ -1,8 +1,10 @@
 #include "event_loop.h"
+
+#include <vector>
+
 #include "epoll.h"
 #include "channel.h"
 #include "thread_pool.h"
-#include <vector>
 
 EventLoop::EventLoop()
     : epoll_(nullptr), thread_pool_(nullptr), quit_(false)

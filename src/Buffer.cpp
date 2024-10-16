@@ -1,4 +1,5 @@
 #include "buffer.h"
+
 #include <iostream>
 
 Buffer::Buffer()
@@ -21,12 +22,12 @@ void Buffer::Append(const char *kSrc, size_t size)
     }
 }
 
-size_t Buffer::Size()
+size_t Buffer::Size() const
 {
     return buf_.size();
 }
 
-const char *Buffer::C_str()
+const char *Buffer::Cstr()
 {
     return buf_.c_str();
 }

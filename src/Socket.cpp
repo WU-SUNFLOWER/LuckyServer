@@ -5,6 +5,7 @@
 Socket::Socket()
 {
     socket_fd_ = mysyscall::CreateSocket(AF_INET, SOCK_STREAM, 0);
+    util::ErrIf(socket_fd_ == -1, "CreateSocket error");
 }
 
 Socket::Socket(int fd) : socket_fd_(fd)
@@ -14,7 +15,7 @@ Socket::Socket(int fd) : socket_fd_(fd)
 
 Socket::~Socket()
 {
-    this->Close();
+    Close();
 }
 
 void Socket::Close()
@@ -28,21 +29,24 @@ void Socket::Close()
 
 void Socket::Bind(const InetAddress &kAddr)
 {
-    mysyscall::Bind(socket_fd_, (sockaddr *)kAddr.GetSockAddress(), kAddr.GetSockLen());
+    util::ErrIf(mysyscall::Bind(socket_fd_, (sockaddr *)kAddr.GetSockAddress(), kAddr.GetSockLen()) == -1,
+                "Bind error");
 }
 
 void Socket::Listen()
 {
-    mysyscall::Listen(socket_fd_, SOMAXCONN);
+    util::ErrIf(mysyscall::Listen(socket_fd_, SOMAXCONN) == -1, "Listen error");
 }
 
 int Socket::Accept(InetAddress &clientAddr)
 {
-    struct sockaddr_in client_addr;
+    struct sockaddr_in client_addr
+    {
+    };
     socklen_t client_addr_len = sizeof(client_addr);
-    bzero(&client_addr, client_addr_len);
 
     int client_fd = mysyscall::Accept(socket_fd_, (sockaddr *)&client_addr, &client_addr_len);
+    util::ErrIf(client_fd == -1, "Accept error");
     clientAddr.SetInetAddress(client_addr);
 
     return client_fd;
@@ -50,10 +54,12 @@ int Socket::Accept(InetAddress &clientAddr)
 
 void Socket::SetNonBlocking()
 {
-    fcntl(socket_fd_, F_SETFL, fcntl(socket_fd_, F_GETFL) | O_NONBLOCK);
+    int flags = fcntl(socket_fd_, F_GETFL, 0);
+    util::ErrIf(flags == -1, "fcntl F_GETFL error");
+    util::ErrIf(fcntl(socket_fd_, F_SETFL, flags | O_NONBLOCK) == -1, "fcntl F_SETFL error");
 }
 
-int Socket::GetFd()
+int Socket::GetFd() const
 {
     return socket_fd_;
 }

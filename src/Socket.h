@@ -1,5 +1,5 @@
-#ifndef HEAD_SOCKET
-#define HEAD_SOCKET
+#ifndef LUCKYSERVER_SOCKET_H_
+#define LUCKYSERVER_SOCKET_H_
 
 #include "inet_address.h"
 
@@ -25,7 +25,7 @@ public:
 
     void SetNonBlocking();
 
-    int GetFd();
+    int GetFd() const;
 };
 
-#endif
+#endif // LUCKYSERVER_SOCKET_H_
