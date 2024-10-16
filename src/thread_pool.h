@@ -11,11 +11,11 @@
 
 class ThreadPool {
 private:
-    std::vector<std::thread> threads;
-    std::queue<std::function<void()>> tasks;
-    std::mutex tasks_mutex;
-    std::condition_variable condition;
-    bool stop;
+    std::vector<std::thread> threads_;
+    std::queue<std::function<void()>> tasks_;
+    std::mutex tasks_mutex_;
+    std::condition_variable condition_;
+    bool stop_;
 public:
     ThreadPool(int total = std::thread::hardware_concurrency());
     

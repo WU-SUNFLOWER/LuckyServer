@@ -10,15 +10,15 @@
 class Acceptor
 {
 private:
-    EventLoop *loop;
-    Socket *socket;
-    InetAddress addr;
-    Channel *acceptChannel;
+    EventLoop *loop_;
+    Socket *socket_;
+    InetAddress address_;
+    Channel *accept_channel_;
 
     std::function<void(Socket *)> newConnectionCallback;
 
 public:
-    Acceptor(EventLoop *_loop);
+    Acceptor(EventLoop *loop);
 
     ~Acceptor();
 

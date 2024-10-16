@@ -6,14 +6,14 @@
 
 Epoll::Epoll()
 {
-    epoll_fd = EpollCreate1(0);
+    epoll_fd_ = EpollCreate1(0);
     events = new epoll_event[MAX_EVENTS];
     bzero(events, sizeof(epoll_event) * MAX_EVENTS);
 }
 
 Epoll::~Epoll()
 {
-    close(epoll_fd);
+    close(epoll_fd_);
     delete[] events;
 }
 
@@ -23,13 +23,13 @@ void Epoll::addFd(int fd, uint32_t option)
     bzero(&event_config, sizeof(event_config));
     event_config.data.fd = fd;
     event_config.events = option;
-    EpollCtl(epoll_fd, EPOLL_CTL_ADD, fd, &event_config);
+    EpollCtl(epoll_fd_, EPOLL_CTL_ADD, fd, &event_config);
 }
 
 std::vector<Channel *> Epoll::wait(int timeout)
 {
     std::vector<Channel *> activeChannels;
-    int total_fd = EpollWait(epoll_fd, events, MAX_EVENTS, timeout);
+    int total_fd = EpollWait(epoll_fd_, events, MAX_EVENTS, timeout);
     for (int i = 0; i < total_fd; ++i)
     {
         epoll_event &currentEvent = events[i];
@@ -51,11 +51,11 @@ void Epoll::updateChannel(Channel *channel)
 
     if (!channel->getInEpoll())
     {
-        EpollCtl(epoll_fd, EPOLL_CTL_ADD, fd, &event_config);
+        EpollCtl(epoll_fd_, EPOLL_CTL_ADD, fd, &event_config);
         channel->setInEpoll();
     }
     else
     {
-        EpollCtl(epoll_fd, EPOLL_CTL_MOD, fd, &event_config);
+        EpollCtl(epoll_fd_, EPOLL_CTL_MOD, fd, &event_config);
     }
 }

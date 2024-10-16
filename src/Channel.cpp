@@ -3,8 +3,8 @@
 #include "util.h"
 #include "syscall.h"
 
-Channel::Channel(EventLoop *_loop, int _fd)
-    : loop(_loop), fd(_fd), events(0), revents(0), inEpoll(false)
+Channel::Channel(EventLoop *loop, int fd)
+    : loop_(loop), fd_(fd), events_(0), revents_(0), in_epoll_(false)
 {
 }
 
@@ -14,44 +14,44 @@ Channel::~Channel()
 
 void Channel::enableReading()
 {
-    events = EPOLLIN | EPOLLET;
-    loop->updateChannel(this);
+    events_ = EPOLLIN | EPOLLET;
+    loop_->updateChannel(this);
 }
 
 void Channel::handleEvent()
 {
     // callback();
-    loop->addTask(callback);
+    loop_->addTask(callback);
 }
 
 int Channel::getFd()
 {
-    return fd;
+    return fd_;
 }
 
 uint32_t Channel::getEvents()
 {
-    return events;
+    return events_;
 }
 
 uint32_t Channel::getRevents()
 {
-    return revents;
+    return revents_;
 }
 
 bool Channel::getInEpoll()
 {
-    return inEpoll;
+    return in_epoll_;
 }
 
 void Channel::setInEpoll()
 {
-    inEpoll = true;
+    in_epoll_ = true;
 }
 
 void Channel::setRevents(uint32_t _revents)
 {
-    revents = _revents;
+    revents_ = _revents;
 }
 
 void Channel::setCallback(std::function<void()> _callback)

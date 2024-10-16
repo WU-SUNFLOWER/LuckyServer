@@ -5,23 +5,23 @@
 #include <vector>
 
 EventLoop::EventLoop()
-    : epoll(nullptr), threadPool(nullptr), quit(false)
+    : epoll_(nullptr), thread_pool_(nullptr), quit_(false)
 {
-    epoll = new Epoll();
-    threadPool = new ThreadPool();
+    epoll_ = new Epoll();
+    thread_pool_ = new ThreadPool();
 }
 
 EventLoop::~EventLoop()
 {
-    delete epoll;
-    delete threadPool;
+    delete epoll_;
+    delete thread_pool_;
 }
 
 void EventLoop::loop()
 {
-    while (!quit)
+    while (!quit_)
     {
-        std::vector<Channel *> channels = epoll->wait();
+        std::vector<Channel *> channels = epoll_->wait();
         for (Channel *channel : channels)
         {
             channel->handleEvent();
@@ -31,10 +31,10 @@ void EventLoop::loop()
 
 void EventLoop::updateChannel(Channel *channel)
 {
-    epoll->updateChannel(channel);
+    epoll_->updateChannel(channel);
 }
 
 void EventLoop::addTask(std::function<void()> func)
 {
-    threadPool->addTask(func);
+    thread_pool_->addTask(func);
 }

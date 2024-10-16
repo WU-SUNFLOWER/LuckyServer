@@ -8,7 +8,7 @@
 class Epoll
 {
 private:
-    int epoll_fd;
+    int epoll_fd_;
     struct epoll_event *events;
 
 public:

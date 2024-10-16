@@ -2,15 +2,15 @@
 
 InetAddress::InetAddress()
 {
-    sockaddr_len = sizeof(sockaddr);
-    bzero(&sockaddr, sockaddr_len);
+    sockaddr_len_ = sizeof(sockaddr);
+    bzero(&sockaddr, sockaddr_len_);
 }
 
-InetAddress::InetAddress(const std::string &addr, uint16_t port)
+InetAddress::InetAddress(const std::string &kAddr, uint16_t port)
     : InetAddress()
 {
     sockaddr.sin_family = AF_INET;
-    sockaddr.sin_addr.s_addr = inet_addr(addr.c_str());
+    sockaddr.sin_addr.s_addr = inet_addr(kAddr.c_str());
     sockaddr.sin_port = htons(port);
 }
 
