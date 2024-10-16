@@ -1,11 +1,13 @@
-#include "ThreadPool.h"
+#include "thread_pool.h"
 #include "util.h"
 
-ThreadPool::ThreadPool(int total) 
+ThreadPool::ThreadPool(int total)
     : stop(false)
 {
-    for (int i = 0; i < total; ++i) {
-        threads.emplace_back(std::thread([this]() {
+    for (int i = 0; i < total; ++i)
+    {
+        threads.emplace_back(std::thread([this]()
+                                         {
             while (true) {
                 std::function<void()> task;
                 // critical section start
@@ -22,12 +24,12 @@ ThreadPool::ThreadPool(int total)
                 }
                 // critical section end
                 task();
-            }
-        }));
+            } }));
     }
 }
 
-ThreadPool::~ThreadPool() {
+ThreadPool::~ThreadPool()
+{
     {
         std::unique_lock<std::mutex> lock(tasks_mutex);
         stop = true;
@@ -35,18 +37,22 @@ ThreadPool::~ThreadPool() {
     condition.notify_all();
     // before release ThreadPool itself,
     // let's release all the threads at first!
-    for (std::thread& thread: threads) {
-        if (thread.joinable()) {
+    for (std::thread &thread : threads)
+    {
+        if (thread.joinable())
+        {
             thread.join();
         }
     }
 }
 
-void ThreadPool::addTask(std::function<void()> task) {
+void ThreadPool::addTask(std::function<void()> task)
+{
     // critical section start
     {
         std::unique_lock<std::mutex> lock(tasks_mutex);
-        if (stop) {
+        if (stop)
+        {
             printErrorAndExit("ThreadPool already stop, can't add task any more");
         }
         tasks.emplace(task);

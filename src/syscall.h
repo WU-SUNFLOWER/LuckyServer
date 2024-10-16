@@ -14,12 +14,12 @@
 
 int CreateSocket(int __domain = AF_INET, int __type = SOCK_STREAM, int __protocol = 0);
 int Bind(int __fd, __CONST_SOCKADDR_ARG __addr, socklen_t __len);
-int Accept(int __fd, __SOCKADDR_ARG __addr, socklen_t* __addr_len);
+int Accept(int __fd, __SOCKADDR_ARG __addr, socklen_t *__addr_len);
 int Connect(int __fd, __CONST_SOCKADDR_ARG __addr, socklen_t __len);
 int Listen(int __fd, int __n);
 
 int EpollCreate1(int flag);
-int EpollCtl(int __epfd, int __op, int __fd, struct epoll_event* event);
+int EpollCtl(int __epfd, int __op, int __fd, struct epoll_event *event);
 int EpollWait(int __epfd, struct epoll_event *__events, int __maxevents, int __timeout);
 int Close(int fd);
 

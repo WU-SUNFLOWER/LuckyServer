@@ -1,52 +1,60 @@
-#include "Channel.h"
-#include "EventLoop.h"
+#include "channel.h"
+#include "event_loop.h"
 #include "util.h"
 #include "syscall.h"
 
-Channel::Channel(EventLoop* _loop, int _fd) 
+Channel::Channel(EventLoop *_loop, int _fd)
     : loop(_loop), fd(_fd), events(0), revents(0), inEpoll(false)
 {
-
 }
 
-Channel::~Channel() {
-
+Channel::~Channel()
+{
 }
 
-void Channel::enableReading() {
+void Channel::enableReading()
+{
     events = EPOLLIN | EPOLLET;
     loop->updateChannel(this);
 }
 
-void Channel::handleEvent() {
-    //callback();
+void Channel::handleEvent()
+{
+    // callback();
     loop->addTask(callback);
 }
 
-int Channel::getFd() {
+int Channel::getFd()
+{
     return fd;
 }
 
-uint32_t Channel::getEvents() {
+uint32_t Channel::getEvents()
+{
     return events;
 }
 
-uint32_t Channel::getRevents() {
+uint32_t Channel::getRevents()
+{
     return revents;
 }
 
-bool Channel::getInEpoll() {
+bool Channel::getInEpoll()
+{
     return inEpoll;
 }
 
-void Channel::setInEpoll() {
+void Channel::setInEpoll()
+{
     inEpoll = true;
 }
 
-void Channel::setRevents(uint32_t _revents) {
+void Channel::setRevents(uint32_t _revents)
+{
     revents = _revents;
 }
 
-void Channel::setCallback(std::function<void()> _callback) {
+void Channel::setCallback(std::function<void()> _callback)
+{
     callback = _callback;
 }
