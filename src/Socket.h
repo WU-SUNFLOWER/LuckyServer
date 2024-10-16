@@ -1,26 +1,27 @@
 #ifndef HEAD_SOCKET
 #define HEAD_SOCKET
 
-#include "InetAddress.h"
+#include "inet_address.h"
 
-class Socket {
+class Socket
+{
 private:
     int socket_fd = -1;
+
 public:
-    
     Socket();
-    
+
     Socket(int fd);
 
     ~Socket();
 
     void close();
 
-    void bind(const InetAddress& addr);
+    void bind(const InetAddress &addr);
 
     void listen();
 
-    int accept(InetAddress& clientAddr);
+    int accept(InetAddress &clientAddr);
 
     void connect(const InetAddress& addr);
 

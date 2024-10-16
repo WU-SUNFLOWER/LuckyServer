@@ -1,29 +1,30 @@
 #ifndef HEAD_ACCEPTOR
 #define HEAD_ACCEPTOR
 
-#include "EventLoop.h"
-#include "Socket.h"
-#include "InetAddress.h"
-#include "Channel.h"
+#include "event_loop.h"
+#include "socket.h"
+#include "inet_address.h"
+#include "channel.h"
 #include <functional>
 
-class Acceptor {
+class Acceptor
+{
 private:
-    EventLoop* loop;
-    Socket* socket;
+    EventLoop *loop;
+    Socket *socket;
     InetAddress addr;
-    Channel* acceptChannel;
+    Channel *acceptChannel;
 
-    std::function<void(Socket*)> newConnectionCallback;
+    std::function<void(Socket *)> newConnectionCallback;
 
 public:
-    Acceptor(EventLoop* _loop);
-    
+    Acceptor(EventLoop *_loop);
+
     ~Acceptor();
 
     void acceptConnection();
 
-    void setNewConnectionCallBack(std::function<void(Socket*)>);
+    void setNewConnectionCallBack(std::function<void(Socket *)>);
 };
 
 #endif

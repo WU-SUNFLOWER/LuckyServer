@@ -1,65 +1,60 @@
-#include "Channel.h"
-#include "EventLoop.h"
+#include "channel.h"
+#include "event_loop.h"
 #include "util.h"
 #include "syscall.h"
 
-Channel::Channel(EventLoop* _loop, int _fd) 
-    : loop(_loop), fd(_fd), events(0), ready(0), inEpoll(false)
+Channel::Channel(EventLoop *_loop, int _fd)
+    : loop(_loop), fd(_fd), events(0), revents(0), inEpoll(false)
 {
-
 }
 
-Channel::~Channel() {
-    
+Channel::~Channel()
+{
 }
 
-void Channel::enableReading() {
-    events |= EPOLLIN | EPOLLPRI;
+void Channel::enableReading()
+{
+    events = EPOLLIN | EPOLLET;
     loop->updateChannel(this);
 }
 
-void Channel::useET() {
-    events |= EPOLLET;
-    loop->updateChannel(this);
+void Channel::handleEvent()
+{
+    // callback();
+    loop->addTask(callback);
 }
 
-void Channel::handleEvent() {
-    if (ready & (EPOLLIN | EPOLLPRI)) {
-        readCallback();
-    }
-    if (ready & EPOLLOUT) {
-        writeCallback();
-    }
-}
-
-int Channel::getFd() {
+int Channel::getFd()
+{
     return fd;
 }
 
-uint32_t Channel::getEvents() {
+uint32_t Channel::getEvents()
+{
     return events;
 }
 
-uint32_t Channel::getReady() {
-    return ready;
+uint32_t Channel::getRevents()
+{
+    return revents;
 }
 
-bool Channel::getInEpoll() {
+bool Channel::getInEpoll()
+{
     return inEpoll;
 }
 
-void Channel::setInEpoll() {
+void Channel::setInEpoll()
+{
     inEpoll = true;
 }
 
-void Channel::setReady(uint32_t _revents) {
-    ready = _revents;
+void Channel::setRevents(uint32_t _revents)
+{
+    revents = _revents;
 }
 
-void Channel::setReadCallback(std::function<void()> _callback) {
-    readCallback = _callback;
-}
-
-void Channel::setWriteCallback(std::function<void()> _callback) {
-    writeCallback = _callback;
+void Channel::setCallback(std::function<void()> _callback)
+{
+    callback = _callback;
 }
