@@ -15,7 +15,7 @@ private:
 public:
     InetAddress();
 
-    InetAddress(const std::string &kAddr, uint16_t port);
+    explicit InetAddress(const std::string &kAddr, uint16_t port);
 
     ~InetAddress();
 

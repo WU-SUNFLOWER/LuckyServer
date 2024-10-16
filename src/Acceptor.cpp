@@ -3,10 +3,9 @@
 Acceptor::Acceptor(EventLoop *loop)
     : loop_(loop),
       socket_(new Socket()),
-      accept_channel_(nullptr)
+      accept_channel_(nullptr),
+      address_("127.0.0.1", 8888)
 {
-    address_ = {"127.0.0.1", 8888};
-
     socket_->Bind(address_);
     socket_->Listen();
     socket_->SetNonBlocking();

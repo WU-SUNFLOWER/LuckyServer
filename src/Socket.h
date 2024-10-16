@@ -11,7 +11,7 @@ private:
 public:
     Socket();
 
-    Socket(int fd);
+    explicit Socket(int fd);
 
     ~Socket();
 

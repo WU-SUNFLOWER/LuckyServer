@@ -16,7 +16,7 @@ private:
     std::map<int, Connection *> connections_;
 
 public:
-    Server(EventLoop *loop);
+    explicit Server(EventLoop *loop);
 
     ~Server();
 

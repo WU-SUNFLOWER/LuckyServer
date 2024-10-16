@@ -20,7 +20,7 @@ private:
     Buffer *read_buffer_;
 
 public:
-    Connection(EventLoop *loop, Socket *socket);
+    explicit Connection(EventLoop *loop, Socket *socket);
 
     ~Connection();
 

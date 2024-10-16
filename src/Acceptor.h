@@ -20,7 +20,7 @@ private:
     std::function<void(Socket *)> new_connection_callback_;
 
 public:
-    Acceptor(EventLoop *loop);
+    explicit Acceptor(EventLoop *loop);
 
     ~Acceptor();
 

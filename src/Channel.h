@@ -18,7 +18,7 @@ private:
     std::function<void()> callback_;
 
 public:
-    Channel(EventLoop *loop, int fd);
+    explicit Channel(EventLoop *loop, int fd);
     ~Channel();
 
     void EnableReading();

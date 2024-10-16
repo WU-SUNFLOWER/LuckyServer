@@ -18,7 +18,7 @@ private:
     bool stop_;
 
 public:
-    ThreadPool(int total = std::thread::hardware_concurrency());
+    explicit ThreadPool(int total = std::thread::hardware_concurrency());
 
     ~ThreadPool();
 
