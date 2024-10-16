@@ -1,36 +1,28 @@
-#ifndef HEAD_SERVER
-#define HEAD_SERVER
+#ifndef LUCKYSERVER_SERVER_H_
+#define LUCKYSERVER_SERVER_H_
 
 #include <map>
-#include <vector>
 
 class EventLoop;
 class Acceptor;
 class Socket;
 class Connection;
-class ThreadPool;
 
-class Server {
+class Server
+{
 private:
-    EventLoop* mainReactor;
+    EventLoop *loop_;
+    Acceptor *acceptor_;
+    std::map<int, Connection *> connections_;
 
-    Acceptor* acceptor;
-    
-    std::map<int, Connection*> connections;
-
-    std::vector<EventLoop*> subReactors;
-
-    ThreadPool* threadPool;
 public:
-    Server(EventLoop* _loop);
-    
+    explicit Server(EventLoop *loop);
+
     ~Server();
 
-    void handleReadEvent(int);
+    void NewConnection(Socket *serv_sock);
 
-    void newConnection(Socket* serv_sock);
-
-    void deleteConnection(Socket*);
+    void DeleteConnection(Socket *socket);
 };
 
-#endif
+#endif // LUCKYSERVER_SERVER_H_

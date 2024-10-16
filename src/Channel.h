@@ -1,47 +1,42 @@
-#ifndef HEAD_CHANNEL
-#define HEAD_CHANNEL
+#ifndef LUCKYSERVER_CHANNEL_H_
+#define LUCKYSERVER_CHANNEL_H_
 
 #include <cstdint>
 #include <functional>
 
 class EventLoop;
 
-class Channel {
+class Channel
+{
 private:
-    EventLoop* loop;
-    int fd;
-    uint32_t events;
-    uint32_t ready;
-    bool inEpoll;
+    EventLoop *loop_;
+    int fd_;
+    uint32_t events_;
+    uint32_t revents_;
+    bool in_epoll_;
 
-    std::function<void()> readCallback;
-    std::function<void()> writeCallback;
+    std::function<void()> callback_;
 
 public:
-
-    Channel(EventLoop* _loop, int _fd);
+    explicit Channel(EventLoop *loop, int fd);
     ~Channel();
 
-    void enableReading();
-    void handleEvent();
+    void EnableReading();
+    void HandleEvent();
 
-    int getFd();
+    int GetFd() const;
 
-    uint32_t getEvents();
+    uint32_t GetEvents() const;
 
-    uint32_t getReady();
+    uint32_t GetRevents() const;
 
-    bool getInEpoll();
+    bool GetInEpoll() const;
 
-    void setInEpoll();
+    void SetInEpoll();
 
-    void setReady(uint32_t _revents);
+    void SetRevents(uint32_t revents);
 
-    void setReadCallback(std::function<void()>);
-
-    void setWriteCallback(std::function<void()>);
-
-    void useET();
+    void SetCallback(const std::function<void()>);
 };
 
-#endif
+#endif // LUCKYSERVER_CHANNEL_H_

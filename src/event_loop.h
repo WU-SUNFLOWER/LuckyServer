@@ -1,23 +1,27 @@
-#ifndef HEAD_EVENTLOOP
-#define HEAD_EVENTLOOP
+#ifndef LUCKYSERVER_EVENTLOOP_H_
+#define LUCKYSERVER_EVENTLOOP_H_
 
 #include <functional>
-
 class Epoll;
 class ThreadPool;
 class Channel;
 
-class EventLoop {
+class EventLoop
+{
 private:
-    Epoll* epoll;
-    bool quit;
+    Epoll *epoll_;
+    ThreadPool *thread_pool_;
+    bool quit_;
+
 public:
     EventLoop();
     ~EventLoop();
 
-    void loop();
+    void Loop();
 
-    void updateChannel(Channel* channel);
+    void UpdateChannel(Channel *channel);
+
+    void AddTask(std::function<void()>);
 };
 
-#endif
+#endif // LUCKYSERVER_EVENTLOOP_H_

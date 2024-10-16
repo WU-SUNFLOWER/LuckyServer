@@ -1,5 +1,5 @@
-#ifndef HEAD_SOCKET
-#define HEAD_SOCKET
+#ifndef LUCKYSERVER_SOCKET_H_
+#define LUCKYSERVER_SOCKET_H_
 
 #include "inet_address.h"
 
@@ -15,19 +15,17 @@ public:
 
     ~Socket();
 
-    void close();
+    void Close();
 
-    void bind(const InetAddress &kAddr);
+    void Bind(const InetAddress &kAddr);
 
-    void listen();
+    void Listen();
 
-    int accept(InetAddress &clientAddr);
+    int Accept(InetAddress &clientAddr);
 
-    void connect(const InetAddress& addr);
+    void SetNonBlocking();
 
-    void setNonBlocking();
-
-    int getFd();
+    int GetFd() const;
 };
 
-#endif
+#endif // LUCKYSERVER_SOCKET_H_
