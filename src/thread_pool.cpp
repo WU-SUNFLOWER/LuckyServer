@@ -2,25 +2,25 @@
 #include "util.h"
 
 ThreadPool::ThreadPool(int total)
-    : stop(false)
+    : stop_(false)
 {
     for (int i = 0; i < total; ++i)
     {
-        threads.emplace_back(std::thread([this]()
+        threads_.emplace_back(std::thread([this]()
                                          {
             while (true) {
                 std::function<void()> task;
                 // critical section start
                 {
-                    std::unique_lock<std::mutex> lock(tasks_mutex);
-                    condition.wait(lock, [this]() {
-                        return stop || !tasks.empty();
+                    std::unique_lock<std::mutex> lock(tasks_mutex_);
+                    condition_.wait(lock, [this]() {
+                        return stop_ || !tasks_.empty();
                     });
-                    if (stop && tasks.empty()) {
+                    if (stop_ && tasks_.empty()) {
                         return;
                     }
-                    task = tasks.front();
-                    tasks.pop();
+                    task = tasks_.front();
+                    tasks_.pop();
                 }
                 // critical section end
                 task();
@@ -31,13 +31,13 @@ ThreadPool::ThreadPool(int total)
 ThreadPool::~ThreadPool()
 {
     {
-        std::unique_lock<std::mutex> lock(tasks_mutex);
-        stop = true;
+        std::unique_lock<std::mutex> lock(tasks_mutex_);
+        stop_ = true;
     }
-    condition.notify_all();
+    condition_.notify_all();
     // before release ThreadPool itself,
-    // let's release all the threads at first!
-    for (std::thread &thread : threads)
+    // let's release all the threads_ at first!
+    for (std::thread &thread : threads_)
     {
         if (thread.joinable())
         {
@@ -50,13 +50,13 @@ void ThreadPool::addTask(std::function<void()> task)
 {
     // critical section start
     {
-        std::unique_lock<std::mutex> lock(tasks_mutex);
-        if (stop)
+        std::unique_lock<std::mutex> lock(tasks_mutex_);
+        if (stop_)
         {
             printErrorAndExit("ThreadPool already stop, can't add task any more");
         }
-        tasks.emplace(task);
+        tasks_.emplace(task);
     }
     // critical section end
-    condition.notify_one();
+    condition_.notify_one();
 }

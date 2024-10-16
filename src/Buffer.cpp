@@ -9,35 +9,35 @@ Buffer::~Buffer()
 {
 }
 
-void Buffer::append(const char *src, size_t size)
+void Buffer::append(const char *kSrc, size_t size)
 {
     for (size_t i = 0; i < size; ++i)
     {
-        if (src[i] == '\0')
+        if (kSrc[i] == '\0')
         {
             break;
         }
-        buf.push_back(src[i]);
+        buf_.push_back(kSrc[i]);
     }
 }
 
 size_t Buffer::size()
 {
-    return buf.size();
+    return buf_.size();
 }
 
 const char *Buffer::c_str()
 {
-    return buf.c_str();
+    return buf_.c_str();
 }
 
 void Buffer::clear()
 {
-    buf.clear();
+    buf_.clear();
 }
 
 void Buffer::getline()
 {
-    buf.clear();
-    std::getline(std::cin, buf);
+    buf_.clear();
+    std::getline(std::cin, buf_);
 }

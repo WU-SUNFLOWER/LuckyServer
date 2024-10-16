@@ -4,10 +4,10 @@
 
 Socket::Socket()
 {
-    socket_fd = CreateSocket(AF_INET, SOCK_STREAM, 0);
+    socket_fd_ = CreateSocket(AF_INET, SOCK_STREAM, 0);
 }
 
-Socket::Socket(int fd) : socket_fd(fd)
+Socket::Socket(int fd) : socket_fd_(fd)
 {
     errif(fd == -1, "illegal fd");
 }
@@ -19,21 +19,21 @@ Socket::~Socket()
 
 void Socket::close()
 {
-    if (socket_fd != -1)
+    if (socket_fd_ != -1)
     {
-        Close(socket_fd);
-        socket_fd = -1;
+        Close(socket_fd_);
+        socket_fd_ = -1;
     }
 }
 
-void Socket::bind(const InetAddress &addr)
+void Socket::bind(const InetAddress &kAddr)
 {
-    Bind(socket_fd, (sockaddr *)addr.getSockAddr(), addr.getSockLen());
+    Bind(socket_fd_, (sockaddr *)kAddr.getSockAddr(), kAddr.getSockLen());
 }
 
 void Socket::listen()
 {
-    Listen(socket_fd, SOMAXCONN);
+    Listen(socket_fd_, SOMAXCONN);
 }
 
 int Socket::accept(InetAddress &clientAddr)
@@ -42,7 +42,7 @@ int Socket::accept(InetAddress &clientAddr)
     socklen_t client_addr_len = sizeof(client_addr);
     bzero(&client_addr, client_addr_len);
 
-    int client_fd = Accept(socket_fd, (sockaddr *)&client_addr, &client_addr_len);
+    int client_fd = Accept(socket_fd_, (sockaddr *)&client_addr, &client_addr_len);
     clientAddr.setInetAddr(client_addr);
 
     return client_fd;
@@ -50,10 +50,10 @@ int Socket::accept(InetAddress &clientAddr)
 
 void Socket::setNonBlocking()
 {
-    fcntl(socket_fd, F_SETFL, fcntl(socket_fd, F_GETFL) | O_NONBLOCK);
+    fcntl(socket_fd_, F_SETFL, fcntl(socket_fd_, F_GETFL) | O_NONBLOCK);
 }
 
 int Socket::getFd()
 {
-    return socket_fd;
+    return socket_fd_;
 }

@@ -10,11 +10,11 @@ class Connection;
 
 class Server {
 private:
-    EventLoop* loop;
-    Acceptor* acceptor;
-    std::map<int, Connection*> connections;
+    EventLoop* loop_;
+    Acceptor* acceptor_;
+    std::map<int, Connection*> connections_;
 public:
-    Server(EventLoop* _loop);
+    Server(EventLoop* loop);
     
     ~Server();
 

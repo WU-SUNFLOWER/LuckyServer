@@ -8,17 +8,17 @@ class EventLoop;
 
 class Channel {
 private:
-    EventLoop* loop;
-    int fd;
-    uint32_t events;
-    uint32_t revents;
-    bool inEpoll;
+    EventLoop* loop_;
+    int fd_;
+    uint32_t events_;
+    uint32_t revents_;
+    bool in_epoll_;
 
     std::function<void()> callback;
 
 public:
 
-    Channel(EventLoop* _loop, int _fd);
+    Channel(EventLoop* loop, int fd);
     ~Channel();
 
     void enableReading();
@@ -34,7 +34,7 @@ public:
 
     void setInEpoll();
 
-    void setRevents(uint32_t _revents);
+    void setRevents(uint32_t revents);
 
     void setCallback(std::function<void()>);
 };

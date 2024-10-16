@@ -5,36 +5,36 @@
 #include "connection.h"
 #include "channel.h"
 
-Server::Server(EventLoop *_loop)
-    : loop(_loop), acceptor(nullptr)
+Server::Server(EventLoop *loop)
+    : loop_(loop), acceptor_(nullptr)
 {
-    acceptor = new Acceptor(loop);
+    acceptor_ = new Acceptor(loop_);
     std::function<void(Socket *)> cb = std::bind(
         &Server::newConnection,
         this,
         std::placeholders::_1);
-    acceptor->setNewConnectionCallBack(cb);
+    acceptor_->setNewConnectionCallBack(cb);
 }
 
 Server::~Server()
 {
-    delete acceptor;
+    delete acceptor_;
 }
 
 void Server::newConnection(Socket *clientSocket)
 {
-    Connection *conn = new Connection(loop, clientSocket);
+    Connection *connection = new Connection(loop_, clientSocket);
     std::function<void(Socket *)> cb = std::bind(
         &Server::deleteConnection,
         this,
         std::placeholders::_1);
-    conn->setDeleteConnectionCallback(cb);
-    connections[clientSocket->getFd()] = conn;
+    connection->setDeleteConnectionCallback(cb);
+    connections_[clientSocket->getFd()] = connection;
 }
 
 void Server::deleteConnection(Socket *socket)
 {
-    Connection *conn = connections[socket->getFd()];
-    connections.erase(socket->getFd());
-    delete conn;
+    Connection *connection = connections_[socket->getFd()];
+    connections_.erase(socket->getFd());
+    delete connection;
 }

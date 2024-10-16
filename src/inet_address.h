@@ -8,12 +8,12 @@
 class InetAddress {
 private:
     struct sockaddr_in sockaddr;
-    socklen_t sockaddr_len;
+    socklen_t sockaddr_len_;
 public:
 
     InetAddress();
 
-    InetAddress(const std::string& addr, uint16_t port);
+    InetAddress(const std::string& kAddr, uint16_t port);
     
     ~InetAddress();
 
@@ -22,7 +22,7 @@ public:
     }
 
     socklen_t getSockLen() const {
-        return sockaddr_len;
+        return sockaddr_len_;
     }
 
     std::string getIP() const {

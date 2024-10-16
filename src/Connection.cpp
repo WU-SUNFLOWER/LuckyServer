@@ -7,24 +7,24 @@
 
 #define READ_BUFFER 1024
 
-Connection::Connection(EventLoop *_loop, Socket *_socket)
-    : loop(_loop), socket(_socket), channel(nullptr), inBuffer(nullptr), readBuffer(nullptr)
+Connection::Connection(EventLoop *loop, Socket *socket)
+    : loop_(loop), socket_(socket), channel_(nullptr), in_buffer_(nullptr), read_buffer_(nullptr)
 {
-    channel = new Channel(loop, socket->getFd());
-    std::function<void()> cb = std::bind(&Connection::echo, this, socket->getFd());
-    channel->setCallback(cb);
-    channel->enableReading();
+    channel_ = new Channel(loop_, socket_->getFd());
+    std::function<void()> cb = std::bind(&Connection::echo, this, socket_->getFd());
+    channel_->setCallback(cb);
+    channel_->enableReading();
 
-    inBuffer = new Buffer();
-    readBuffer = new Buffer();
+    in_buffer_ = new Buffer();
+    read_buffer_ = new Buffer();
 }
 
 Connection::~Connection()
 {
-    delete channel;
-    delete socket;
-    delete inBuffer;
-    delete readBuffer;
+    delete channel_;
+    delete socket_;
+    delete in_buffer_;
+    delete read_buffer_;
 }
 
 void Connection::echo(int client_socket_fd)
@@ -36,12 +36,12 @@ void Connection::echo(int client_socket_fd)
         ssize_t read_bytes = read(client_socket_fd, buf, sizeof(buf));
         if (read_bytes > 0)
         {
-            readBuffer->append(buf, read_bytes);
+            read_buffer_->append(buf, read_bytes);
         }
         else if (read_bytes == 0)
         {
             printf("client fd %d disconnected\n", client_socket_fd);
-            deleteConnectionCallback(socket);
+            deleteConnectionCallback(socket_);
             break;
         }
         else if (read_bytes == -1 && errno == EINTR)
@@ -53,17 +53,17 @@ void Connection::echo(int client_socket_fd)
         {
             printf("finish reading once, errno: %d\n", errno);
             printf("read %ld bytes mssage from client fd %d: %s\n",
-                   readBuffer->size(),
+                   read_buffer_->size(),
                    client_socket_fd,
-                   readBuffer->c_str());
-            Write(client_socket_fd, readBuffer->c_str(), readBuffer->size());
-            readBuffer->clear();
+                   read_buffer_->c_str());
+            Write(client_socket_fd, read_buffer_->c_str(), read_buffer_->size());
+            read_buffer_->clear();
             break;
         }
         else
         {
             printErrorAndExit("unknown return value of read function.");
-            deleteConnectionCallback(socket);
+            deleteConnectionCallback(socket_);
             break;
         }
     }

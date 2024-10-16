@@ -1,43 +1,43 @@
 #include "acceptor.h"
 
-Acceptor::Acceptor(EventLoop *_loop)
-    : loop(_loop)
+Acceptor::Acceptor(EventLoop *loop)
+    : loop_(loop)
 {
-    socket = new Socket();
-    addr = {"127.0.0.1", 8888};
+    socket_ = new Socket();
+    address_ = {"127.0.0.1", 8888};
 
-    socket->bind(addr);
-    socket->listen();
-    socket->setNonBlocking();
+    socket_->bind(address_);
+    socket_->listen();
+    socket_->setNonBlocking();
 
-    acceptChannel = new Channel(loop, socket->getFd());
+    accept_channel_ = new Channel(loop_, socket_->getFd());
     std::function<void()> cb = std::bind(&Acceptor::acceptConnection, this);
 
-    acceptChannel->setCallback(cb);
-    acceptChannel->enableReading();
+    accept_channel_->setCallback(cb);
+    accept_channel_->enableReading();
 }
 
 Acceptor::~Acceptor()
 {
-    delete socket;
-    delete acceptChannel;
+    delete socket_;
+    delete accept_channel_;
 }
 
 void Acceptor::acceptConnection()
 {
-    InetAddress clientAddr;
-    Socket *clientSocket = new Socket(socket->accept(clientAddr));
-    clientSocket->setNonBlocking();
+    InetAddress client_address;
+    Socket *client_socket = new Socket(socket_->accept(client_address));
+    client_socket->setNonBlocking();
 
     printf("New client fd %d! From IP: %s Port: %d\n",
-           clientSocket->getFd(),
-           clientAddr.getIP().c_str(),
-           clientAddr.getPort());
+           client_socket->getFd(),
+           client_address.getIP().c_str(),
+           client_address.getPort());
 
-    newConnectionCallback(clientSocket);
+    newConnectionCallback(client_socket);
 }
 
-void Acceptor::setNewConnectionCallBack(std::function<void(Socket *)> _cb)
+void Acceptor::setNewConnectionCallBack(std::function<void(Socket *)> cb)
 {
-    newConnectionCallback = _cb;
+    newConnectionCallback = cb;
 }

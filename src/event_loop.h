@@ -9,9 +9,9 @@ class Channel;
 
 class EventLoop {
 private:
-    Epoll* epoll;
-    ThreadPool* threadPool;
-    bool quit;
+    Epoll* epoll_;
+    ThreadPool* thread_pool_;
+    bool quit_;
 public:
     EventLoop();
     ~EventLoop();

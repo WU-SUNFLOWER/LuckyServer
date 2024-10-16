@@ -6,7 +6,7 @@
 class Socket
 {
 private:
-    int socket_fd = -1;
+    int socket_fd_ = -1;
 
 public:
     Socket();
@@ -17,7 +17,7 @@ public:
 
     void close();
 
-    void bind(const InetAddress &addr);
+    void bind(const InetAddress &kAddr);
 
     void listen();
 
