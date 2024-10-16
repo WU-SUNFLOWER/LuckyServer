@@ -16,11 +16,11 @@ public:
     EventLoop();
     ~EventLoop();
 
-    void loop();
+    void Loop();
 
-    void updateChannel(Channel* channel);
+    void UpdateChannel(Channel* channel);
 
-    void addTask(std::function<void()>);
+    void AddTask(std::function<void()>);
 };
 
 #endif

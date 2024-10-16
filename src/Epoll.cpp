@@ -6,56 +6,56 @@
 
 Epoll::Epoll()
 {
-    epoll_fd_ = EpollCreate1(0);
+    epoll_fd_ = mysyscall::EpollCreate1(0);
     events = new epoll_event[MAX_EVENTS];
     bzero(events, sizeof(epoll_event) * MAX_EVENTS);
 }
 
 Epoll::~Epoll()
 {
-    close(epoll_fd_);
+    mysyscall::Close(epoll_fd_);
     delete[] events;
 }
 
-void Epoll::addFd(int fd, uint32_t option)
+void Epoll::AddFd(int fd, uint32_t option)
 {
     epoll_event event_config;
     bzero(&event_config, sizeof(event_config));
     event_config.data.fd = fd;
     event_config.events = option;
-    EpollCtl(epoll_fd_, EPOLL_CTL_ADD, fd, &event_config);
+    mysyscall::EpollCtl(epoll_fd_, EPOLL_CTL_ADD, fd, &event_config);
 }
 
-std::vector<Channel *> Epoll::wait(int timeout)
+std::vector<Channel *> Epoll::Wait(int timeout)
 {
-    std::vector<Channel *> activeChannels;
-    int total_fd = EpollWait(epoll_fd_, events, MAX_EVENTS, timeout);
+    std::vector<Channel *> active_channels;
+    int total_fd = mysyscall::EpollWait(epoll_fd_, events, MAX_EVENTS, timeout);
     for (int i = 0; i < total_fd; ++i)
     {
         epoll_event &currentEvent = events[i];
         Channel *channel = (Channel *)currentEvent.data.ptr;
-        channel->setRevents(currentEvent.events);
-        activeChannels.push_back(channel);
+        channel->SetRevents(currentEvent.events);
+        active_channels.push_back(channel);
     }
-    return activeChannels;
+    return active_channels;
 }
 
-void Epoll::updateChannel(Channel *channel)
+void Epoll::UpdateChannel(Channel *channel)
 {
-    int fd = channel->getFd();
+    int fd = channel->GetFd();
     epoll_event event_config;
     bzero(&event_config, sizeof(event_config));
 
     event_config.data.ptr = channel;
-    event_config.events = channel->getEvents();
+    event_config.events = channel->GetEvents();
 
-    if (!channel->getInEpoll())
+    if (!channel->GetInEpoll())
     {
-        EpollCtl(epoll_fd_, EPOLL_CTL_ADD, fd, &event_config);
-        channel->setInEpoll();
+        mysyscall::EpollCtl(epoll_fd_, EPOLL_CTL_ADD, fd, &event_config);
+        channel->SetInEpoll();
     }
     else
     {
-        EpollCtl(epoll_fd_, EPOLL_CTL_MOD, fd, &event_config);
+        mysyscall::EpollCtl(epoll_fd_, EPOLL_CTL_MOD, fd, &event_config);
     }
 }

@@ -15,11 +15,11 @@ public:
     Epoll();
     ~Epoll();
 
-    void addFd(int fd, uint32_t option);
+    void AddFd(int fd, uint32_t option);
 
-    std::vector<Channel *> wait(int timeout = -1);
+    std::vector<Channel *> Wait(int timeout = -1);
 
-    void updateChannel(Channel *channel);
+    void UpdateChannel(Channel *channel);
 };
 
 #endif

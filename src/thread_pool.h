@@ -20,7 +20,7 @@ public:
     
     ~ThreadPool();
 
-    void addTask(std::function<void()>);
+    void AddTask(std::function<void()>);
 };
 
 #endif

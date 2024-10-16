@@ -18,9 +18,9 @@ public:
     
     ~Server();
 
-    void newConnection(Socket* serv_sock);
+    void NewConnection(Socket* serv_sock);
 
-    void deleteConnection(Socket*);
+    void DeleteConnection(Socket*);
 };
 
 #endif

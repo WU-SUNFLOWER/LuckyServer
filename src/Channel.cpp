@@ -12,49 +12,49 @@ Channel::~Channel()
 {
 }
 
-void Channel::enableReading()
+void Channel::EnableReading()
 {
     events_ = EPOLLIN | EPOLLET;
-    loop_->updateChannel(this);
+    loop_->UpdateChannel(this);
 }
 
-void Channel::handleEvent()
+void Channel::HandleEvent()
 {
     // callback();
-    loop_->addTask(callback);
+    loop_->AddTask(callback);
 }
 
-int Channel::getFd()
+int Channel::GetFd()
 {
     return fd_;
 }
 
-uint32_t Channel::getEvents()
+uint32_t Channel::GetEvents()
 {
     return events_;
 }
 
-uint32_t Channel::getRevents()
+uint32_t Channel::GetRevents()
 {
     return revents_;
 }
 
-bool Channel::getInEpoll()
+bool Channel::GetInEpoll()
 {
     return in_epoll_;
 }
 
-void Channel::setInEpoll()
+void Channel::SetInEpoll()
 {
     in_epoll_ = true;
 }
 
-void Channel::setRevents(uint32_t _revents)
+void Channel::SetRevents(uint32_t _revents)
 {
     revents_ = _revents;
 }
 
-void Channel::setCallback(std::function<void()> _callback)
+void Channel::SetCallback(std::function<void()> _callback)
 {
     callback = _callback;
 }

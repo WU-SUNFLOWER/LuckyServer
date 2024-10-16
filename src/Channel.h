@@ -21,22 +21,22 @@ public:
     Channel(EventLoop* loop, int fd);
     ~Channel();
 
-    void enableReading();
-    void handleEvent();
+    void EnableReading();
+    void HandleEvent();
 
-    int getFd();
+    int GetFd();
 
-    uint32_t getEvents();
+    uint32_t GetEvents();
 
-    uint32_t getRevents();
+    uint32_t GetRevents();
 
-    bool getInEpoll();
+    bool GetInEpoll();
 
-    void setInEpoll();
+    void SetInEpoll();
 
-    void setRevents(uint32_t revents);
+    void SetRevents(uint32_t revents);
 
-    void setCallback(std::function<void()>);
+    void SetCallback(std::function<void()>);
 };
 
 #endif

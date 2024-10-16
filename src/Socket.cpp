@@ -4,56 +4,56 @@
 
 Socket::Socket()
 {
-    socket_fd_ = CreateSocket(AF_INET, SOCK_STREAM, 0);
+    socket_fd_ = mysyscall::CreateSocket(AF_INET, SOCK_STREAM, 0);
 }
 
 Socket::Socket(int fd) : socket_fd_(fd)
 {
-    errif(fd == -1, "illegal fd");
+    util::ErrIf(fd == -1, "illegal fd");
 }
 
 Socket::~Socket()
 {
-    this->close();
+    this->Close();
 }
 
-void Socket::close()
+void Socket::Close()
 {
     if (socket_fd_ != -1)
     {
-        Close(socket_fd_);
+        mysyscall::Close(socket_fd_);
         socket_fd_ = -1;
     }
 }
 
-void Socket::bind(const InetAddress &kAddr)
+void Socket::Bind(const InetAddress &kAddr)
 {
-    Bind(socket_fd_, (sockaddr *)kAddr.getSockAddr(), kAddr.getSockLen());
+    mysyscall::Bind(socket_fd_, (sockaddr *)kAddr.GetSockAddress(), kAddr.GetSockLen());
 }
 
-void Socket::listen()
+void Socket::Listen()
 {
-    Listen(socket_fd_, SOMAXCONN);
+    mysyscall::Listen(socket_fd_, SOMAXCONN);
 }
 
-int Socket::accept(InetAddress &clientAddr)
+int Socket::Accept(InetAddress &clientAddr)
 {
     struct sockaddr_in client_addr;
     socklen_t client_addr_len = sizeof(client_addr);
     bzero(&client_addr, client_addr_len);
 
-    int client_fd = Accept(socket_fd_, (sockaddr *)&client_addr, &client_addr_len);
-    clientAddr.setInetAddr(client_addr);
+    int client_fd = mysyscall::Accept(socket_fd_, (sockaddr *)&client_addr, &client_addr_len);
+    clientAddr.SetInetAddress(client_addr);
 
     return client_fd;
 }
 
-void Socket::setNonBlocking()
+void Socket::SetNonBlocking()
 {
     fcntl(socket_fd_, F_SETFL, fcntl(socket_fd_, F_GETFL) | O_NONBLOCK);
 }
 
-int Socket::getFd()
+int Socket::GetFd()
 {
     return socket_fd_;
 }

@@ -17,23 +17,23 @@ public:
     
     ~InetAddress();
 
-    const struct sockaddr_in* getSockAddr() const {
+    const struct sockaddr_in* GetSockAddress() const {
         return &sockaddr;
     }
 
-    socklen_t getSockLen() const {
+    socklen_t GetSockLen() const {
         return sockaddr_len_;
     }
 
-    std::string getIP() const {
+    std::string GetIP() const {
         return inet_ntoa(sockaddr.sin_addr);
     }
 
-    uint16_t getPort() {
+    uint16_t GetPort() {
         return ntohs(sockaddr.sin_port);
     }
 
-    void setInetAddr(struct sockaddr_in& sockaddr);
+    void SetInetAddress(struct sockaddr_in& sockaddr);
 };
 
 #endif

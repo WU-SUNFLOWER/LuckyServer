@@ -15,17 +15,17 @@ public:
 
     ~Socket();
 
-    void close();
+    void Close();
 
-    void bind(const InetAddress &kAddr);
+    void Bind(const InetAddress &kAddr);
 
-    void listen();
+    void Listen();
 
-    int accept(InetAddress &clientAddr);
+    int Accept(InetAddress &clientAddr);
 
-    void setNonBlocking();
+    void SetNonBlocking();
 
-    int getFd();
+    int GetFd();
 };
 
 #endif

@@ -11,15 +11,15 @@ public:
     
     ~Buffer();
 
-    void append(const char* kSrc, size_t size);
+    void Append(const char* kSrc, size_t size);
 
-    size_t size();
+    size_t Size();
 
-    const char* c_str();
+    const char* C_str();
 
-    void clear();
+    void Clear();
 
-    void getline();
+    void Getline();
 };
 
 #endif

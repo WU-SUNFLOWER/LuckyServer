@@ -15,16 +15,16 @@ private:
     InetAddress address_;
     Channel *accept_channel_;
 
-    std::function<void(Socket *)> newConnectionCallback;
+    std::function<void(Socket *)> NewConnectionCallback;
 
 public:
     Acceptor(EventLoop *loop);
 
     ~Acceptor();
 
-    void acceptConnection();
+    void AcceptConnection();
 
-    void setNewConnectionCallBack(std::function<void(Socket *)>);
+    void SetNewConnectionCallBack(std::function<void(Socket *)>);
 };
 
 #endif

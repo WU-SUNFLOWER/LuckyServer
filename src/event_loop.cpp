@@ -17,24 +17,24 @@ EventLoop::~EventLoop()
     delete thread_pool_;
 }
 
-void EventLoop::loop()
+void EventLoop::Loop()
 {
     while (!quit_)
     {
-        std::vector<Channel *> channels = epoll_->wait();
+        std::vector<Channel *> channels = epoll_->Wait();
         for (Channel *channel : channels)
         {
-            channel->handleEvent();
+            channel->HandleEvent();
         }
     }
 }
 
-void EventLoop::updateChannel(Channel *channel)
+void EventLoop::UpdateChannel(Channel *channel)
 {
-    epoll_->updateChannel(channel);
+    epoll_->UpdateChannel(channel);
 }
 
-void EventLoop::addTask(std::function<void()> func)
+void EventLoop::AddTask(std::function<void()> func)
 {
-    thread_pool_->addTask(func);
+    thread_pool_->AddTask(func);
 }
