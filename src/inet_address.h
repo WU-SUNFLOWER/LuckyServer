@@ -9,7 +9,7 @@
 class InetAddress
 {
 private:
-    struct sockaddr_in sockaddr;
+    sockaddr_in sockaddr_;
     socklen_t sockaddr_len_;
 
 public:
@@ -19,9 +19,9 @@ public:
 
     ~InetAddress();
 
-    const struct sockaddr_in *GetSockAddress() const
+    const sockaddr_in *GetSockAddress() const
     {
-        return &sockaddr;
+        return &sockaddr_;
     }
 
     socklen_t GetSockLen() const
@@ -31,15 +31,15 @@ public:
 
     std::string GetIP() const
     {
-        return inet_ntoa(sockaddr.sin_addr);
+        return inet_ntoa(sockaddr_.sin_addr);
     }
 
     uint16_t GetPort()
     {
-        return ntohs(sockaddr.sin_port);
+        return ntohs(sockaddr_.sin_port);
     }
 
-    void SetInetAddress(struct sockaddr_in &sockaddr);
+    void SetInetAddress(struct sockaddr_in &sockaddr_);
 };
 
 #endif // LUCKYSERVER_INETADDRESS_H_

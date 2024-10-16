@@ -23,6 +23,8 @@ public:
 
     int Accept(InetAddress &clientAddr);
 
+    void Connect(const InetAddress &addr);
+
     void SetNonBlocking();
 
     int GetFd() const;

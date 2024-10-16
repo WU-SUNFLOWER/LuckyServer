@@ -24,7 +24,9 @@ public:
 
     ~Connection();
 
-    void Echo(int socket_fd);
+    void Echo();
+
+    void Send();
 
     void SetDeleteConnectionCallback(std::function<void(Socket *)>);
 };

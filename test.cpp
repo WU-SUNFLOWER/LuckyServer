@@ -2,87 +2,90 @@
 #include <unistd.h>
 #include <string.h>
 #include <functional>
+
 #include "src/util.h"
-#include "src/Buffer.h"
-#include "src/Socket.h"
-#include "src/ThreadPool.h"
-
-using namespace std;
-
-void oneClient(int msgs, int wait){
+#include "src/buffer.h"
+#include "src/socket.h"
+#include "src/thread_pool.h"
+void OneClient(int msgs, int wait)
+{
     Socket *sock = new Socket();
     InetAddress addr("127.0.0.1", 8888);
-    // sock->setnonblocking(); å®¢æˆ·ç«¯ä½¿ç”¨é˜»å¡žå¼è¿žæŽ¥æ¯”è¾ƒå¥½ï¼Œæ–¹ä¾¿ç®€å•ä¸å®¹æ˜“å‡ºé”™
-    sock->connect(addr);
-
-    int sockfd = sock->getFd();
-
-    Buffer *sendBuffer = new Buffer();
-    Buffer *readBuffer = new Buffer();
-
+    // sock->setnonblocking(); ¿Í»§¶ËÊ¹ÓÃ×èÈûÊ½Á¬½Ó±È½ÏºÃ£¬·½±ã¼òµ¥²»ÈÝÒ×³ö´í
+    sock->Connect(addr);
+    int sockfd = sock->GetFd();
+    Buffer *send_buffer = new Buffer();
+    Buffer *read_buffer = new Buffer();
     sleep(wait);
     int count = 0;
-    while(count < msgs){
-        sendBuffer->setBuf("I'm client!");
-        ssize_t write_bytes = write(sockfd, sendBuffer->c_str(), sendBuffer->size());
-        if(write_bytes == -1){
+    while (count < msgs)
+    {
+        send_buffer->SetBuf("I'm client!");
+        ssize_t write_bytes = write(sockfd, send_buffer->Cstr(), send_buffer->Size());
+        if (write_bytes == -1)
+        {
             printf("socket already disconnected, can't write any more!\n");
             break;
         }
         int already_read = 0;
-        char buf[1024];    //è¿™ä¸ªbufå¤§å°æ— æ‰€è°“
-        while(true){
+        char buf[1024]; // Õâ¸öbuf´óÐ¡ÎÞËùÎ½
+        while (true)
+        {
             bzero(&buf, sizeof(buf));
             ssize_t read_bytes = read(sockfd, buf, sizeof(buf));
-            if(read_bytes > 0){
-                readBuffer->append(buf, read_bytes);
+            if (read_bytes > 0)
+            {
+                read_buffer->Append(buf, read_bytes);
                 already_read += read_bytes;
-            } else if(read_bytes == 0){         //EOF
+            }
+            else if (read_bytes == 0)
+            { // EOF
                 printf("server disconnected!\n");
                 exit(EXIT_SUCCESS);
             }
-            if(already_read >= sendBuffer->size()){
-                printf("count: %d, message from server: %s\n", count++, readBuffer->c_str());
+            if (already_read >= send_buffer->Size())
+            {
+                printf("count: %d, message from server: %s\n", count++, read_buffer->Cstr());
                 break;
-            } 
+            }
         }
-        readBuffer->clear();
+        read_buffer->Clear();
     }
-    
+
     delete sock;
 }
-
-int main(int argc, char *argv[]) {
+int main(int argc, char *argv[])
+{
     int threads = 100;
     int msgs = 100;
     int wait = 0;
     int o;
     const char *optstring = "t:m:w:";
-    while ((o = getopt(argc, argv, optstring)) != -1) {
-        switch (o) {
-            case 't':
-                threads = stoi(optarg);
-                break;
-            case 'm':
-                msgs = stoi(optarg);
-                break;
-            case 'w':
-                wait = stoi(optarg);
-                break;
-            case '?':
-                printf("error optopt: %c\n", optopt);
-                printf("error opterr: %d\n", opterr);
-                break;
+    while ((o = getopt(argc, argv, optstring)) != -1)
+    {
+        switch (o)
+        {
+        case 't':
+            threads = std::stoi(optarg);
+            break;
+        case 'm':
+            msgs = std::stoi(optarg);
+            break;
+        case 'w':
+            wait = std::stoi(optarg);
+            break;
+        case '?':
+            printf("error optopt: %c\n", optopt);
+            printf("error opterr: %d\n", opterr);
+            break;
         }
     }
-
     ThreadPool *poll = new ThreadPool(threads);
-    std::function<void()> func = std::bind(oneClient, msgs, wait);
-
+    std::function<void()> func = std::bind(OneClient, msgs, wait);
     std::cout << "threads=" << threads << std::endl;
-
-    for(int i = 0; i < threads; ++i){
-        poll->addTask(func);
+    for (int i = 0; i < threads; ++i)
+    {
+        poll->AddTask(func);
     }
     delete poll;
     return 0;

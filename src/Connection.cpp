@@ -6,15 +6,16 @@
 #include "buffer.h"
 #include "channel.h"
 
-const int kReadBuffer = 1024;
+#define READ_BUFFER 1024
 
 Connection::Connection(EventLoop *loop, Socket *socket)
     : loop_(loop), socket_(socket), channel_(nullptr), in_buffer_(nullptr), read_buffer_(nullptr)
 {
     channel_ = new Channel(loop_, socket_->GetFd());
-    std::function<void()> callback = std::bind(&Connection::Echo, this, socket_->GetFd());
-    channel_->SetCallback(callback);
     channel_->EnableReading();
+    channel_->UseET();
+    std::function<void()> callback = std::bind(&Connection::Echo, this);
+    channel_->SetReadCallback(callback);
 
     in_buffer_ = new Buffer();
     read_buffer_ = new Buffer();
@@ -28,9 +29,10 @@ Connection::~Connection()
     delete read_buffer_;
 }
 
-void Connection::Echo(int client_socket_fd)
+void Connection::Echo()
 {
-    char buf[kReadBuffer];
+    char buf[READ_BUFFER];
+    int client_socket_fd = socket_->GetFd();
     while (true)
     {
         bzero(buf, sizeof(buf));
@@ -52,12 +54,11 @@ void Connection::Echo(int client_socket_fd)
         }
         else if (read_bytes == -1 && (errno == EAGAIN || errno == EWOULDBLOCK))
         {
-            printf("finish reading once, errno: %d\n", errno);
             printf("read %ld bytes mssage from client fd %d: %s\n",
                    read_buffer_->Size(),
                    client_socket_fd,
                    read_buffer_->Cstr());
-            mysyscall::Write(client_socket_fd, read_buffer_->Cstr(), read_buffer_->Size());
+            Send();
             read_buffer_->Clear();
             break;
         }
@@ -67,6 +68,21 @@ void Connection::Echo(int client_socket_fd)
             delete_connection_callback_(socket_);
             break;
         }
+    }
+}
+void Connection::Send()
+{
+    const char *buf = read_buffer_->Cstr();
+    size_t data_size = read_buffer_->Size();
+    size_t data_left = data_size;
+    while (data_left > 0)
+    {
+        ssize_t write_bytes = write(socket_->GetFd(), buf + data_size - data_left, data_left);
+        if (write_bytes == -1 && errno == EAGAIN)
+        {
+            break;
+        }
+        data_left -= write_bytes;
     }
 }
 

@@ -34,7 +34,7 @@ std::vector<Channel *> Epoll::Wait(int timeout)
         epoll_event &currentEvent = events[i];
         // 使用static_cast替代C风格的类型转换
         Channel *channel = static_cast<Channel *>(currentEvent.data.ptr);
-        channel->SetRevents(currentEvent.events);
+        channel->SetReady(currentEvent.events);
         active_channels.push_back(channel);
     }
     return active_channels;

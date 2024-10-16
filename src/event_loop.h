@@ -10,7 +10,6 @@ class EventLoop
 {
 private:
     Epoll *epoll_;
-    ThreadPool *thread_pool_;
     bool quit_;
 
 public:
@@ -20,8 +19,6 @@ public:
     void Loop();
 
     void UpdateChannel(Channel *channel);
-
-    void AddTask(std::function<void()>);
 };
 
 #endif // LUCKYSERVER_EVENTLOOP_H_

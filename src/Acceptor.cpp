@@ -8,10 +8,9 @@ Acceptor::Acceptor(EventLoop *loop)
 {
     socket_->Bind(address_);
     socket_->Listen();
-    socket_->SetNonBlocking();
 
     accept_channel_ = new Channel(loop_, socket_->GetFd());
-    accept_channel_->SetCallback(std::bind(&Acceptor::AcceptConnection, this));
+    accept_channel_->SetReadCallback(std::bind(&Acceptor::AcceptConnection, this));
     accept_channel_->EnableReading();
 }
 
@@ -24,6 +23,7 @@ Acceptor::~Acceptor()
 void Acceptor::AcceptConnection()
 {
     InetAddress client_address;
+    printf("Acceptor::acceptConnection\n");
     Socket *client_socket = new Socket(socket_->Accept(client_address));
     client_socket->SetNonBlocking();
 
@@ -38,7 +38,7 @@ void Acceptor::AcceptConnection()
     }
 }
 
-void Acceptor::SetNewConnectionCallBack(std::function<void(Socket *)> cb)
+void Acceptor::SetNewConnectionCallBack(std::function<void(Socket *)> callback)
 {
-    new_connection_callback_ = cb;
+    new_connection_callback_ = callback;
 }

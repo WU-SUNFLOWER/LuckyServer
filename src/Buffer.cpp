@@ -37,8 +37,14 @@ void Buffer::Clear()
     buf_.clear();
 }
 
-void Buffer::Getline()
+void Buffer::GetLine()
 {
     buf_.clear();
     std::getline(std::cin, buf_);
+}
+
+void Buffer::SetBuf(const char *buf)
+{
+    buf_.clear();
+    buf_.append(buf);
 }

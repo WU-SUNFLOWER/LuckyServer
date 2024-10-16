@@ -52,6 +52,34 @@ int Socket::Accept(InetAddress &clientAddr)
     return client_fd;
 }
 
+void Socket::Connect(const InetAddress &addr)
+{
+    const sockaddr_in *address = addr.GetSockAddress();
+    if (fcntl(socket_fd_, F_GETFL) & O_NONBLOCK)
+    {
+        while (true)
+        {
+            int ret = mysyscall::Connect(socket_fd_, (sockaddr *)address, sizeof(sockaddr_in));
+            if (ret == 0)
+            {
+                break;
+            }
+            else if (ret == -1 && errno == EINPROGRESS)
+            {
+                continue;
+            }
+            else if (ret == -1)
+            {
+                util::PrintErrorAndExit("socket connect error");
+            }
+        }
+    }
+    else
+    {
+        mysyscall::Connect(socket_fd_, (sockaddr *)address, sizeof(sockaddr_in));
+    }
+}
+
 void Socket::SetNonBlocking()
 {
     int flags = fcntl(socket_fd_, F_GETFL, 0);
