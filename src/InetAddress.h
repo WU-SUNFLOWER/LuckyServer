@@ -7,7 +7,7 @@
 
 class InetAddress {
 private:
-    struct sockaddr_in sockaddr;
+    sockaddr_in sockaddr;
     socklen_t sockaddr_len;
 public:
 
@@ -17,7 +17,7 @@ public:
     
     ~InetAddress();
 
-    const struct sockaddr_in* getSockAddr() const {
+    const sockaddr_in* getSockAddr() const {
         return &sockaddr;
     }
 

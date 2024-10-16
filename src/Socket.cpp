@@ -40,6 +40,26 @@ int Socket::accept(InetAddress& clientAddr) {
     return client_fd;
 }
 
+void Socket::connect(const InetAddress& _addr) {
+    const sockaddr_in* addr = _addr.getSockAddr();
+    if (fcntl(socket_fd, F_GETFL) & O_NONBLOCK) {
+        while (true) {
+            int ret = ::connect(socket_fd, (sockaddr*)addr, sizeof(sockaddr_in));
+            if (ret == 0) {
+                break;
+            }
+            else if (ret == -1 && errno == EINPROGRESS) {
+                continue;
+            }
+            else if (ret == -1) {
+                printErrorAndExit("socket connect error");
+            }
+        }
+    } else {
+        Connect(socket_fd, (sockaddr*)addr, sizeof(sockaddr_in));
+    }
+}
+
 void Socket::setNonBlocking() {
     fcntl(socket_fd, F_SETFL, fcntl(socket_fd, F_GETFL) | O_NONBLOCK);  
 }

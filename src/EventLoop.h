@@ -10,7 +10,6 @@ class Channel;
 class EventLoop {
 private:
     Epoll* epoll;
-    ThreadPool* threadPool;
     bool quit;
 public:
     EventLoop();
@@ -19,8 +18,6 @@ public:
     void loop();
 
     void updateChannel(Channel* channel);
-
-    void addTask(std::function<void()>);
 };
 
 #endif

@@ -11,10 +11,11 @@ private:
     EventLoop* loop;
     int fd;
     uint32_t events;
-    uint32_t revents;
+    uint32_t ready;
     bool inEpoll;
 
-    std::function<void()> callback;
+    std::function<void()> readCallback;
+    std::function<void()> writeCallback;
 
 public:
 
@@ -28,15 +29,19 @@ public:
 
     uint32_t getEvents();
 
-    uint32_t getRevents();
+    uint32_t getReady();
 
     bool getInEpoll();
 
     void setInEpoll();
 
-    void setRevents(uint32_t _revents);
+    void setReady(uint32_t _revents);
 
-    void setCallback(std::function<void()>);
+    void setReadCallback(std::function<void()>);
+
+    void setWriteCallback(std::function<void()>);
+
+    void useET();
 };
 
 #endif

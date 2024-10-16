@@ -22,6 +22,8 @@ public:
 
     int accept(InetAddress& clientAddr);
 
+    void connect(const InetAddress& addr);
+
     void setNonBlocking();
 
     int getFd();

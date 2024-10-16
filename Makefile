@@ -8,8 +8,18 @@ PrefixedEncapsulations = $(patsubst %.cpp, $(Source_Path)%.cpp, $(Encapsulations
 
 server:
 	g++ -g -std=c++20 $(PrefixedDependences) $(PrefixedEncapsulations) server.cpp -o server
-	g++ -g -std=c++20 $(PrefixedDependences) client.cpp -o client
+
+client:
+	g++ -g -std=c++20 $(PrefixedDependences) $(PrefixedEncapsulations) client.cpp -o client
+
+test_thread_pool:
+	g++ -g -std=c++20 $(PrefixedDependences) $(PrefixedEncapsulations) ThreadPoolTest.cpp -o ThreadPoolTest
+
+test:
+	g++ -g -std=c++20 $(PrefixedDependences) $(PrefixedEncapsulations) test.cpp -o test	
 
 clean:
 	rm -f server
 	rm -f client
+	rm -f ThreadPoolTest
+	rm -f test

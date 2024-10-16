@@ -42,6 +42,7 @@ ThreadPool::~ThreadPool() {
     }
 }
 
+/*
 void ThreadPool::addTask(std::function<void()> task) {
     // critical section start
     {
@@ -54,3 +55,4 @@ void ThreadPool::addTask(std::function<void()> task) {
     // critical section end
     condition.notify_one();
 }
+*/

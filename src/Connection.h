@@ -23,7 +23,8 @@ public:
     
     ~Connection();
 
-    void echo(int socket_fd);
+    void echo();
+    void send();
 
     void setDeleteConnectionCallback(std::function<void(Socket*)>);
 

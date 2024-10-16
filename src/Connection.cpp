@@ -11,9 +11,11 @@ Connection::Connection(EventLoop *_loop, Socket *_socket)
     : loop(_loop), socket(_socket), channel(nullptr), inBuffer(nullptr), readBuffer(nullptr)
 {
     channel = new Channel(loop, socket->getFd());
-    std::function<void()> cb = std::bind(&Connection::echo, this, socket->getFd());
-    channel->setCallback(cb);
     channel->enableReading();
+    channel->useET();
+
+    std::function<void()> cb = std::bind(&Connection::echo, this);
+    channel->setReadCallback(cb);
 
     inBuffer = new Buffer();
     readBuffer = new Buffer();
@@ -26,8 +28,9 @@ Connection::~Connection() {
     delete readBuffer;
 }
 
-void Connection::echo(int client_socket_fd) {
+void Connection::echo() {
     char buf[READ_BUFFER];
+    int client_socket_fd = socket->getFd();
     while (true) {
         bzero(buf, sizeof(buf));
         ssize_t read_bytes = read(client_socket_fd, buf, sizeof(buf));
@@ -44,13 +47,12 @@ void Connection::echo(int client_socket_fd) {
             continue;
         }
         else if (read_bytes == -1 && (errno == EAGAIN || errno == EWOULDBLOCK)) {
-            printf("finish reading once, errno: %d\n", errno);
             printf("read %ld bytes mssage from client fd %d: %s\n", 
                 readBuffer->size(), 
                 client_socket_fd, 
                 readBuffer->c_str()
             );
-            Write(client_socket_fd, readBuffer->c_str(), readBuffer->size());
+            send();
             readBuffer->clear();
             break;
         } 
@@ -59,6 +61,19 @@ void Connection::echo(int client_socket_fd) {
             deleteConnectionCallback(socket);
             break;
         }
+    }
+}
+
+void Connection::send() {
+    const char* buf = readBuffer->c_str();
+    size_t data_size = readBuffer->size();
+    size_t data_left = data_size;
+    while (data_left > 0) {
+        ssize_t write_bytes = write(socket->getFd(), buf + data_size - data_left, data_left);
+        if (write_bytes == -1 && errno == EAGAIN) {
+            break;
+        }
+        data_left -= write_bytes;
     }
 }
 

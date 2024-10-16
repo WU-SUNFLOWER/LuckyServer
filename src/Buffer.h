@@ -20,6 +20,8 @@ public:
     void clear();
 
     void getline();
+
+    void setBuf(const char* _buf);
 };
 
 #endif

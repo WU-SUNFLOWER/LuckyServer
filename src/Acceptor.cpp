@@ -8,12 +8,11 @@ Acceptor::Acceptor(EventLoop *_loop)
     
     socket->bind(addr);
     socket->listen();
-    socket->setNonBlocking();
 
     acceptChannel = new Channel(loop, socket->getFd());
     std::function<void()> cb = std::bind(&Acceptor::acceptConnection, this);
 
-    acceptChannel->setCallback(cb);
+    acceptChannel->setReadCallback(cb);
     acceptChannel->enableReading();
 }
 
@@ -24,6 +23,9 @@ Acceptor::~Acceptor() {
 
 void Acceptor::acceptConnection() {
     InetAddress clientAddr;
+
+    printf("Acceptor::acceptConnection\n");
+
     Socket* clientSocket = new Socket(socket->accept(clientAddr));
     clientSocket->setNonBlocking();
 
