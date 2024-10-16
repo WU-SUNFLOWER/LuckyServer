@@ -20,26 +20,26 @@ void Channel::EnableReading()
 
 void Channel::HandleEvent()
 {
-    // callback();
-    loop_->AddTask(callback);
+    // callback_();
+    loop_->AddTask(callback_);
 }
 
-int Channel::GetFd()
+int Channel::GetFd() const
 {
     return fd_;
 }
 
-uint32_t Channel::GetEvents()
+uint32_t Channel::GetEvents() const
 {
     return events_;
 }
 
-uint32_t Channel::GetRevents()
+uint32_t Channel::GetRevents() const
 {
     return revents_;
 }
 
-bool Channel::GetInEpoll()
+bool Channel::GetInEpoll() const
 {
     return in_epoll_;
 }
@@ -54,7 +54,7 @@ void Channel::SetRevents(uint32_t _revents)
     revents_ = _revents;
 }
 
-void Channel::SetCallback(std::function<void()> _callback)
+void Channel::SetCallback(std::function<void()> callback)
 {
-    callback = _callback;
+    callback_ = callback;
 }

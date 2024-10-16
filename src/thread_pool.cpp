@@ -7,7 +7,7 @@ ThreadPool::ThreadPool(int total)
     for (int i = 0; i < total; ++i)
     {
         threads_.emplace_back(std::thread([this]()
-                                         {
+                                          {
             while (true) {
                 std::function<void()> task;
                 // critical section start

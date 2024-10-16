@@ -73,4 +73,4 @@ namespace mysyscall
         util::ErrIf(ret == -1, "close fd error");
         return ret;
     }
-}
+} // namespace mysyscall

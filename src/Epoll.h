@@ -1,8 +1,9 @@
-#ifndef HEAD_EPOLL
-#define HEAD_EPOLL
+#ifndef LUCKYSERVER_EPOLL_H_
+#define LUCKYSERVER_EPOLL_H_
 
 #include <cstdint>
 #include <vector>
+
 #include "channel.h"
 
 class Epoll
@@ -22,4 +23,4 @@ public:
     void UpdateChannel(Channel *channel);
 };
 
-#endif
+#endif // LUCKYSERVER_EPOLL_H_
