@@ -5,7 +5,7 @@ int main() {
 
     EventLoop loop;
     Server server(&loop);
-    loop.loop();
+    loop.Loop();
     
     return 0;
 }

@@ -1,49 +1,45 @@
-#include <iostream>
-#include <unistd.h>
-#include <string.h>
 #include "src/util.h"
-#include "src/Buffer.h"
-#include "src/Socket.h"
-
-using namespace std;
+#include "src/syscall.h"
 
 int main() {
-    Socket *sock = new Socket();
-    InetAddress addr("127.0.0.1", 8888);
-    sock->connect(addr);
+    int socket_fd = mysyscall::CreateSocket(AF_INET, SOCK_STREAM, 0);
 
-    int sockfd = sock->getFd();
+    struct sockaddr_in serv_addr;
+    bzero(&serv_addr, sizeof(serv_addr));
 
-    Buffer *sendBuffer = new Buffer();
-    Buffer *readBuffer = new Buffer();
-    
-    while(true){
-        sendBuffer->getline();
-        ssize_t write_bytes = write(sockfd, sendBuffer->c_str(), sendBuffer->size());
-        if(write_bytes == -1){
-            printf("socket already disconnected, can't write any more!\n");
+    serv_addr.sin_family = AF_INET;
+    serv_addr.sin_addr.s_addr = inet_addr("127.0.0.1");
+    serv_addr.sin_port = htons(8888);
+
+    mysyscall::Connect(socket_fd, (sockaddr*)&serv_addr, sizeof(serv_addr));
+
+    char buf[1024];
+    while (true) {
+        // send data to server
+        bzero(buf, sizeof(buf));
+        scanf("%s", buf);
+        ssize_t write_bytes = mysyscall::Write(socket_fd, buf, sizeof(buf));
+        util::ErrIf(write_bytes == -1, "socket already disconnected, can't write any more!");
+        printf("send %ld bytes message to server: %s\n", write_bytes, buf);
+
+        // read data from server
+        bzero(buf, sizeof(buf));
+        ssize_t read_bytes = read(socket_fd, buf, sizeof(buf));
+        if (read_bytes > 0) {
+            printf("read %ld bytes message from server: %s\n", read_bytes, buf);
+        } 
+        else if (read_bytes == 0) {
+            printf("server socket disconnected!\n");
+            mysyscall::Close(socket_fd);
             break;
         }
-        int already_read = 0;
-        char buf[1024];    //这个buf大小无所谓
-        while(true){
-            bzero(&buf, sizeof(buf));
-            ssize_t read_bytes = read(sockfd, buf, sizeof(buf));
-            if(read_bytes > 0){
-                readBuffer->append(buf, read_bytes);
-                already_read += read_bytes;
-            } else if(read_bytes == 0){         //EOF
-                printf("server disconnected!\n");
-                exit(EXIT_SUCCESS);
-            }
-            if(already_read >= sendBuffer->size()){
-                printf("message from server: %s\n", readBuffer->c_str());
-                break;
-            } 
+        else if (read_bytes == -1) {
+            mysyscall::Close(socket_fd);
+            util::PrintErrorAndExit("socket read error");
         }
-        readBuffer->clear();
+        else {
+            mysyscall::Close(socket_fd);
+            util::PrintErrorAndExit("unknown return value of read function!");
+        }
     }
-    
-    delete sock;
-    return 0;
 }

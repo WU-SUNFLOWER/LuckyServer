@@ -10,10 +10,10 @@ Server::Server(EventLoop *loop)
 {
     acceptor_ = new Acceptor(loop_);
     std::function<void(Socket *)> cb = std::bind(
-        &Server::newConnection,
+        &Server::NewConnection,
         this,
         std::placeholders::_1);
-    acceptor_->setNewConnectionCallBack(cb);
+    acceptor_->SetNewConnectionCallBack(cb);
 }
 
 Server::~Server()
@@ -21,20 +21,20 @@ Server::~Server()
     delete acceptor_;
 }
 
-void Server::newConnection(Socket *clientSocket)
+void Server::NewConnection(Socket *clientSocket)
 {
     Connection *connection = new Connection(loop_, clientSocket);
     std::function<void(Socket *)> cb = std::bind(
-        &Server::deleteConnection,
+        &Server::DeleteConnection,
         this,
         std::placeholders::_1);
-    connection->setDeleteConnectionCallback(cb);
-    connections_[clientSocket->getFd()] = connection;
+    connection->SetDeleteConnectionCallback(cb);
+    connections_[clientSocket->GetFd()] = connection;
 }
 
-void Server::deleteConnection(Socket *socket)
+void Server::DeleteConnection(Socket *socket)
 {
-    Connection *connection = connections_[socket->getFd()];
-    connections_.erase(socket->getFd());
+    Connection *connection = connections_[socket->GetFd()];
+    connections_.erase(socket->GetFd());
     delete connection;
 }

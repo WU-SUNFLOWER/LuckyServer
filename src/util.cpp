@@ -2,13 +2,15 @@
 #include <cstdio>
 #include <cstdlib>
 
-void printErrorAndExit(const char* kMsg) {
+namespace util{
+void PrintErrorAndExit(const char* kMsg) {
     perror(kMsg);
     exit(EXIT_FAILURE);    
 }
 
-void errif(bool condition, const char* kMsg) {
+void ErrIf(bool condition, const char* kMsg) {
     if (condition) {
-        printErrorAndExit(kMsg);
+        PrintErrorAndExit(kMsg);
     }
+}
 }

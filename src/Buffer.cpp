@@ -9,7 +9,7 @@ Buffer::~Buffer()
 {
 }
 
-void Buffer::append(const char *kSrc, size_t size)
+void Buffer::Append(const char *kSrc, size_t size)
 {
     for (size_t i = 0; i < size; ++i)
     {
@@ -21,22 +21,22 @@ void Buffer::append(const char *kSrc, size_t size)
     }
 }
 
-size_t Buffer::size()
+size_t Buffer::Size()
 {
     return buf_.size();
 }
 
-const char *Buffer::c_str()
+const char *Buffer::C_str()
 {
     return buf_.c_str();
 }
 
-void Buffer::clear()
+void Buffer::Clear()
 {
     buf_.clear();
 }
 
-void Buffer::getline()
+void Buffer::Getline()
 {
     buf_.clear();
     std::getline(std::cin, buf_);
