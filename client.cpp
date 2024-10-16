@@ -2,9 +2,10 @@
 #include <unistd.h>
 #include <string.h>
 
-#include "src/util.h"
-#include "src/buffer.h"
-#include "src/socket.h"
+#include "util.h"
+#include "buffer.h"
+#include "socket.h"
+
 int main()
 {
     Socket *sock = new Socket();
@@ -17,14 +18,14 @@ int main()
     while (true)
     {
         send_buffer->GetLine();
-        ssize_t write_bytes = write(sockfd, send_buffer->Cstr(), send_buffer->Size());
+        ssize_t write_bytes = write(sockfd, send_buffer->ToStr(), send_buffer->Size());
         if (write_bytes == -1)
         {
             printf("socket already disconnected, can't write any more!\n");
             break;
         }
         int already_read = 0;
-        char buf[1024]; // Õâ¸öbuf´óÐ¡ÎÞËùÎ½
+        char buf[1024]; // ï¿½ï¿½ï¿½bufï¿½ï¿½Ð¡ï¿½ï¿½ï¿½ï¿½Î½
         while (true)
         {
             bzero(&buf, sizeof(buf));
@@ -41,7 +42,7 @@ int main()
             }
             if (already_read >= send_buffer->Size())
             {
-                printf("message from server: %s\n", read_buffer->Cstr());
+                printf("message from server: %s\n", read_buffer->ToStr());
                 break;
             }
         }

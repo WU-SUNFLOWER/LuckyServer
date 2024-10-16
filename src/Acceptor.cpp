@@ -1,10 +1,12 @@
 #include "acceptor.h"
+#include "socket.h"
+#include "channel.h"
 
 Acceptor::Acceptor(EventLoop *loop)
     : loop_(loop),
       socket_(new Socket()),
-      accept_channel_(nullptr),
-      address_("127.0.0.1", 8888)
+      address_("127.0.0.1", 8888),
+      accept_channel_(nullptr)
 {
     socket_->Bind(address_);
     socket_->Listen();
@@ -38,7 +40,7 @@ void Acceptor::AcceptConnection()
     }
 }
 
-void Acceptor::SetNewConnectionCallBack(std::function<void(Socket *)> callback)
+void Acceptor::SetNewConnectionCallBack(std::function<void(Socket *)> const &callback)
 {
     new_connection_callback_ = callback;
 }

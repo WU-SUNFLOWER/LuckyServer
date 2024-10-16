@@ -10,6 +10,7 @@ Channel::Channel(EventLoop *loop, int fd)
 
 Channel::~Channel()
 {
+    loop_->DeleteChannel(this);
 }
 
 void Channel::EnableReading()
@@ -17,6 +18,7 @@ void Channel::EnableReading()
     events_ |= EPOLLIN | EPOLLPRI;
     loop_->UpdateChannel(this);
 }
+
 void Channel::UseET()
 {
     events_ |= EPOLLET;
@@ -55,9 +57,9 @@ bool Channel::GetInEpoll() const
     return in_epoll_;
 }
 
-void Channel::SetInEpoll()
+void Channel::SetInEpoll(bool flag)
 {
-    in_epoll_ = true;
+    in_epoll_ = flag;
 }
 
 void Channel::SetReady(uint32_t ready)
@@ -65,12 +67,12 @@ void Channel::SetReady(uint32_t ready)
     ready_ = ready;
 }
 
-void Channel::SetReadCallback(std::function<void()> callback)
+void Channel::SetReadCallback(std::function<void()> const &callback)
 {
     read_callback_ = callback;
 }
 
-void Channel::SetWriteCallback(std::function<void()> callback)
+void Channel::SetWriteCallback(std::function<void()> const &callback)
 {
     write_callback_ = callback;
 }

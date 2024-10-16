@@ -57,7 +57,7 @@ void Connection::Echo()
             printf("read %ld bytes mssage from client fd %d: %s\n",
                    read_buffer_->Size(),
                    client_socket_fd,
-                   read_buffer_->Cstr());
+                   read_buffer_->ToStr());
             Send();
             read_buffer_->Clear();
             break;
@@ -72,7 +72,7 @@ void Connection::Echo()
 }
 void Connection::Send()
 {
-    const char *buf = read_buffer_->Cstr();
+    const char *buf = read_buffer_->ToStr();
     size_t data_size = read_buffer_->Size();
     size_t data_left = data_size;
     while (data_left > 0)
@@ -86,7 +86,7 @@ void Connection::Send()
     }
 }
 
-void Connection::SetDeleteConnectionCallback(std::function<void(Socket *)> callback)
+void Connection::SetDeleteConnectionCallback(std::function<void(Socket *)> const &callback)
 {
     delete_connection_callback_ = callback;
 }

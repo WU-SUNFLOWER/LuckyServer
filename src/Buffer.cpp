@@ -27,7 +27,7 @@ size_t Buffer::Size() const
     return buf_.size();
 }
 
-const char *Buffer::Cstr()
+const char *Buffer::ToStr()
 {
     return buf_.c_str();
 }

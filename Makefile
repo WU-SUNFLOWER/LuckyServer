@@ -1,19 +1,20 @@
-Source_Path = src/
+Source_Path = src
+Include_Path = include
 
-Dependences = util.cpp syscall.cpp
-PrefixedDependences = $(patsubst %.cpp, $(Source_Path)%.cpp, $(Dependences))
+Include_Paths = -I$(Include_Path)
 
-Encapsulations = thread_pool.cpp buffer.cpp server.cpp epoll.cpp channel.cpp event_loop.cpp inet_address.cpp socket.cpp acceptor.cpp connection.cpp
-PrefixedEncapsulations = $(patsubst %.cpp, $(Source_Path)%.cpp, $(Encapsulations))
+Source_Files = $(wildcard $(Source_Path)/*.cpp)
+
+CFlags = -g -Wall -Wextra
 
 server:
-	g++ -g -std=c++20 $(PrefixedDependences) $(PrefixedEncapsulations) server.cpp -o server
+	g++ $(CFlags) $(Include_Paths) $(Source_Files) server.cpp -o server
 client:
-	g++ -g -std=c++20 $(PrefixedDependences) $(PrefixedEncapsulations) client.cpp -o client
+	g++ $(CFlags) $(Include_Paths) $(Source_Files) client.cpp -o client
 test_thread_pool:
-	g++ -g -std=c++20 $(PrefixedDependences) $(PrefixedEncapsulations) ThreadPoolTest.cpp -o ThreadPoolTest
+	g++ $(CFlags) $(Include_Paths) $(Source_Files) ThreadPoolTest.cpp -o ThreadPoolTest
 test:
-	g++ -g -std=c++20 $(PrefixedDependences) $(PrefixedEncapsulations) test.cpp -o test	
+	g++ $(CFlags) $(Include_Paths) $(Source_Files) test.cpp -o test	
 clean:
 	rm -f server
 	rm -f client

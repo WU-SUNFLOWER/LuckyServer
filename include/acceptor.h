@@ -3,10 +3,11 @@
 
 #include <functional>
 
-#include "event_loop.h"
-#include "socket.h"
 #include "inet_address.h"
-#include "channel.h"
+
+class EventLoop;
+class Socket;
+class Channel;
 
 class Acceptor
 {
@@ -26,7 +27,7 @@ public:
 
     void AcceptConnection();
 
-    void SetNewConnectionCallBack(std::function<void(Socket *)>);
+    void SetNewConnectionCallBack(std::function<void(Socket *)> const &);
 };
 
 #endif // LUCKYSERVER_ACCEPTOR_H_

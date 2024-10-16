@@ -21,6 +21,8 @@ public:
     std::vector<Channel *> Wait(int timeout = -1);
 
     void UpdateChannel(Channel *channel);
+
+    void DeleteChannel(Channel *channel);
 };
 
 #endif // LUCKYSERVER_EPOLL_H_

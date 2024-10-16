@@ -28,7 +28,7 @@ public:
 
     void Send();
 
-    void SetDeleteConnectionCallback(std::function<void(Socket *)>);
+    void SetDeleteConnectionCallback(std::function<void(Socket *)> const &);
 };
 
 #endif // LUCKYSERVER_CONNECTION_H_

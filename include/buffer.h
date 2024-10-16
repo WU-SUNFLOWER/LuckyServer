@@ -17,7 +17,7 @@ public:
 
     size_t Size() const;
 
-    const char *Cstr();
+    const char *ToStr();
 
     void Clear();
 

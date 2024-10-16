@@ -36,13 +36,13 @@ public:
 
     bool GetInEpoll() const;
 
-    void SetInEpoll();
+    void SetInEpoll(bool);
 
     void SetReady(uint32_t ready);
 
-    void SetReadCallback(std::function<void()> callback);
+    void SetReadCallback(std::function<void()> const &callback);
 
-    void SetWriteCallback(std::function<void()> callback);
+    void SetWriteCallback(std::function<void()> const &callback);
 };
 
 #endif // LUCKYSERVER_CHANNEL_H_

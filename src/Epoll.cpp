@@ -8,7 +8,6 @@
 Epoll::Epoll() : events(new epoll_event[MAX_EVENTS])
 {
     epoll_fd_ = mysyscall::EpollCreate1(0);
-    // bzero(events, sizeof(epoll_event) * MAX_EVENTS);
 }
 
 Epoll::~Epoll()
@@ -32,7 +31,6 @@ std::vector<Channel *> Epoll::Wait(int timeout)
     for (int i = 0; i < total_fd; ++i)
     {
         epoll_event &currentEvent = events[i];
-        // 使用static_cast替代C风格的类型转换
         Channel *channel = static_cast<Channel *>(currentEvent.data.ptr);
         channel->SetReady(currentEvent.events);
         active_channels.push_back(channel);
@@ -51,10 +49,21 @@ void Epoll::UpdateChannel(Channel *channel)
     if (!channel->GetInEpoll())
     {
         mysyscall::EpollCtl(epoll_fd_, EPOLL_CTL_ADD, fd, &event_config);
-        channel->SetInEpoll();
+        channel->SetInEpoll(true);
     }
     else
     {
         mysyscall::EpollCtl(epoll_fd_, EPOLL_CTL_MOD, fd, &event_config);
+    }
+}
+
+void Epoll::DeleteChannel(Channel *channel)
+{
+    int channel_fd = channel->GetFd();
+    util::ErrIf(channel_fd == -1, "delete channel error");
+
+    if (channel->GetInEpoll()) {
+        channel->SetInEpoll(false);
+        mysyscall::EpollCtl(epoll_fd_, EPOLL_CTL_DEL, channel_fd, nullptr);
     }
 }

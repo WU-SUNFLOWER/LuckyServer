@@ -19,6 +19,8 @@ public:
     void Loop();
 
     void UpdateChannel(Channel *channel);
+
+    void DeleteChannel(Channel *channel);
 };
 
 #endif // LUCKYSERVER_EVENTLOOP_H_

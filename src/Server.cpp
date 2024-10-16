@@ -9,9 +9,10 @@
 #include "connection.h"
 #include "channel.h"
 #include "thread_pool.h"
+#include "util.h"
 
 Server::Server(EventLoop *loop)
-    : main_reactor_(loop), acceptor_(nullptr)
+    : main_reactor_(loop), acceptor_(nullptr), thread_pool_(nullptr)
 {
     acceptor_ = new Acceptor(main_reactor_);
     std::function<void(Socket *)> cb = std::bind(
@@ -39,23 +40,25 @@ Server::~Server()
 
 void Server::NewConnection(Socket *client_socket)
 {
-    if (client_socket->GetFd() != -1)
-    {
-        int random = client_socket->GetFd() % sub_reactors_.size();
-        Connection *connection = new Connection(sub_reactors_[random], client_socket);
+    util::ErrIf(client_socket->GetFd() == -1, "new connection error");
 
-        std::function<void(Socket *)> cb = std::bind(
-            &Server::DeleteConnection,
-            this,
-            std::placeholders::_1);
-        connection->SetDeleteConnectionCallback(cb);
-        connections_[client_socket->GetFd()] = connection;
-    }
+    int random = client_socket->GetFd() % sub_reactors_.size();
+    Connection *connection = new Connection(sub_reactors_[random], client_socket);
+
+    std::function<void(Socket *)> cb = std::bind(
+        &Server::DeleteConnection,
+        this,
+        std::placeholders::_1);
+
+    connection->SetDeleteConnectionCallback(cb);
+    connections_[client_socket->GetFd()] = connection;
 }
 
-void Server::DeleteConnection(Socket *socket)
+void Server::DeleteConnection(Socket *client_socket)
 {
-    Connection *connection = connections_[socket->GetFd()];
-    connections_.erase(socket->GetFd());
+    util::ErrIf(client_socket->GetFd() == -1, "delete connection error");
+
+    Connection *connection = connections_[client_socket->GetFd()];
+    connections_.erase(client_socket->GetFd());
     delete connection;
 }

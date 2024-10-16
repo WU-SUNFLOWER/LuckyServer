@@ -3,15 +3,16 @@
 #include <string.h>
 #include <functional>
 
-#include "src/util.h"
-#include "src/buffer.h"
-#include "src/socket.h"
-#include "src/thread_pool.h"
+#include "util.h"
+#include "buffer.h"
+#include "socket.h"
+#include "thread_pool.h"
+
 void OneClient(int msgs, int wait)
 {
     Socket *sock = new Socket();
     InetAddress addr("127.0.0.1", 8888);
-    // sock->setnonblocking(); 客户端使用阻塞式连接比较好，方便简单不容易出错
+    
     sock->Connect(addr);
     int sockfd = sock->GetFd();
     Buffer *send_buffer = new Buffer();
@@ -21,14 +22,14 @@ void OneClient(int msgs, int wait)
     while (count < msgs)
     {
         send_buffer->SetBuf("I'm client!");
-        ssize_t write_bytes = write(sockfd, send_buffer->Cstr(), send_buffer->Size());
+        ssize_t write_bytes = write(sockfd, send_buffer->ToStr(), send_buffer->Size());
         if (write_bytes == -1)
         {
             printf("socket already disconnected, can't write any more!\n");
             break;
         }
-        int already_read = 0;
-        char buf[1024]; // 这个buf大小无所谓
+        size_t already_read = 0;
+        char buf[1024];
         while (true)
         {
             bzero(&buf, sizeof(buf));
@@ -45,7 +46,7 @@ void OneClient(int msgs, int wait)
             }
             if (already_read >= send_buffer->Size())
             {
-                printf("count: %d, message from server: %s\n", count++, read_buffer->Cstr());
+                printf("count: %d, message from server: %s\n", count++, read_buffer->ToStr());
                 break;
             }
         }

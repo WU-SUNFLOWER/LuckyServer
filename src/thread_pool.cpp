@@ -45,18 +45,3 @@ ThreadPool::~ThreadPool()
         }
     }
 }
-/*
-void ThreadPool::AddTask(std::function<void()> task)
-{
-    // critical section start
-    {
-        std::unique_lock<std::mutex> lock(tasks_mutex_);
-        if (stop_)
-        {
-            util::PrintErrorAndExit("ThreadPool already stop, can't add task any more");
-        }
-        tasks_.emplace(task);
-    }
-    // critical section end
-    condition_.notify_one();
-}*/
