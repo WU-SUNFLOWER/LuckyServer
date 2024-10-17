@@ -25,7 +25,6 @@ Acceptor::~Acceptor()
 void Acceptor::AcceptConnection()
 {
     InetAddress client_address;
-    printf("Acceptor::acceptConnection\n");
     Socket *client_socket = new Socket(socket_->Accept(client_address));
     client_socket->SetNonBlocking();
 

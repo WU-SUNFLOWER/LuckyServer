@@ -6,8 +6,7 @@
 class Socket
 {
 private:
-    int socket_fd_ = -1;
-
+    int socket_fd_;
 public:
     Socket();
 
@@ -26,6 +25,8 @@ public:
     void Connect(const InetAddress &addr);
 
     void SetNonBlocking();
+
+    bool IsNonBlocking();
 
     int GetFd() const;
 };

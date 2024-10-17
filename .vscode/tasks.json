@@ -5,7 +5,7 @@
             "label": "Build with Makefile",
             "type": "shell",
             "command": "make",
-            "args": ["server"],
+            "args": ["http_server"],
             "group": {
                 "kind": "build",
                 "isDefault": true

@@ -42,7 +42,7 @@ int Channel::GetFd() const
     return fd_;
 }
 
-uint32_t Channel::GetEvents() const
+uint32_t Channel::GetListenEvents() const
 {
     return events_;
 }

@@ -1,3 +1,5 @@
+APPS = echo_server http_server single_client multiply_client test_thread_pool
+
 Source_Path = src
 Include_Path = include
 
@@ -7,16 +9,19 @@ Source_Files = $(wildcard $(Source_Path)/*.cpp)
 
 CFlags = -g -Wall -Wextra
 
-server:
-	g++ $(CFlags) $(Include_Paths) $(Source_Files) server.cpp -o server
-client:
-	g++ $(CFlags) $(Include_Paths) $(Source_Files) client.cpp -o client
-test_thread_pool:
-	g++ $(CFlags) $(Include_Paths) $(Source_Files) ThreadPoolTest.cpp -o ThreadPoolTest
-test:
-	g++ $(CFlags) $(Include_Paths) $(Source_Files) test.cpp -o test	
+CXX = g++
+
+.PHONY: all clean $(APPS)
+
+all: $(APPS)
+
+$(APPS): %: dist/%
+
+dist/%: app/%.cpp $(Source_Files) | dist
+	$(CXX) $(CFlags) $(Include_Paths) $(Source_Files) $< -o $@
+
+dist:
+	mkdir -p dist
+
 clean:
-	rm -f server
-	rm -f client
-	rm -f ThreadPoolTest
-	rm -f test
+	rm -rf dist

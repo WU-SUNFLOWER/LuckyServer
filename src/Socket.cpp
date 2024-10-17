@@ -3,6 +3,7 @@
 #include "util.h"
 
 Socket::Socket()
+    : socket_fd_(-1)
 {
     socket_fd_ = mysyscall::CreateSocket(AF_INET, SOCK_STREAM, 0);
     util::ErrIf(socket_fd_ == -1, "CreateSocket error");
@@ -55,7 +56,7 @@ int Socket::Accept(InetAddress &clientAddr)
 void Socket::Connect(const InetAddress &addr)
 {
     const sockaddr_in *address = addr.GetSockAddress();
-    if (fcntl(socket_fd_, F_GETFL) & O_NONBLOCK)
+    if (IsNonBlocking())
     {
         while (true)
         {
@@ -85,6 +86,11 @@ void Socket::SetNonBlocking()
     int flags = fcntl(socket_fd_, F_GETFL, 0);
     util::ErrIf(flags == -1, "fcntl F_GETFL error");
     util::ErrIf(fcntl(socket_fd_, F_SETFL, flags | O_NONBLOCK) == -1, "fcntl F_SETFL error");
+}
+
+bool Socket::IsNonBlocking()
+{
+    return (fcntl(socket_fd_, F_GETFL) & O_NONBLOCK) != 0;
 }
 
 int Socket::GetFd() const

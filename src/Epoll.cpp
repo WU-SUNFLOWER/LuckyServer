@@ -44,7 +44,7 @@ void Epoll::UpdateChannel(Channel *channel)
     epoll_event event_config{};
 
     event_config.data.ptr = channel;
-    event_config.events = channel->GetEvents();
+    event_config.events = channel->GetListenEvents();
 
     if (!channel->GetInEpoll())
     {

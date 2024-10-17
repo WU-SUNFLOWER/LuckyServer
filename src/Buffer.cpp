@@ -48,3 +48,8 @@ void Buffer::SetBuf(const char *buf)
     buf_.clear();
     buf_.append(buf);
 }
+
+const std::string &Buffer::ToRaw()
+{
+    return buf_;
+}

@@ -30,7 +30,7 @@ public:
 
     int GetFd() const;
 
-    uint32_t GetEvents() const;
+    uint32_t GetListenEvents() const;
 
     uint32_t GetReady() const;
 

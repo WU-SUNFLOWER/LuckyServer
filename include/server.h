@@ -3,6 +3,7 @@
 
 #include <map>
 #include <vector>
+#include <functional>
 
 class EventLoop;
 class Acceptor;
@@ -19,6 +20,8 @@ private:
     std::vector<EventLoop *> sub_reactors_;
     ThreadPool *thread_pool_;
 
+    std::function<void(Connection*)> on_connect_callback_;
+
 public:
     explicit Server(EventLoop *loop);
 
@@ -29,6 +32,8 @@ public:
     void NewConnection(Socket *serv_sock);
 
     void DeleteConnection(Socket *socket);
+
+    void OnConnect(std::function<void(Connection *)> const &fn);
 };
 
 #endif // LUCKYSERVER_SERVER_H_

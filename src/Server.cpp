@@ -50,15 +50,24 @@ void Server::NewConnection(Socket *client_socket)
         this,
         std::placeholders::_1);
 
+    connection->SetOnConnectCallback(on_connect_callback_);
     connection->SetDeleteConnectionCallback(cb);
     connections_[client_socket->GetFd()] = connection;
 }
 
 void Server::DeleteConnection(Socket *client_socket)
 {
-    util::ErrIf(client_socket->GetFd() == -1, "delete connection error");
+    int client_fd = client_socket->GetFd();
+    util::ErrIf(client_fd == -1, "delete connection error");
 
-    Connection *connection = connections_[client_socket->GetFd()];
-    connections_.erase(client_socket->GetFd());
+    Connection *connection = connections_[client_fd];
+    util::ErrIf(connection == nullptr, "connection is nullptr");
+
+    connections_.erase(client_fd);
     delete connection;
+}
+
+void Server::OnConnect(std::function<void(Connection *)> const &fn)
+{
+    on_connect_callback_ = fn;
 }

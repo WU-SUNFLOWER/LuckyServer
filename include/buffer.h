@@ -19,6 +19,8 @@ public:
 
     const char *ToStr();
 
+    const std::string &ToRaw();
+
     void Clear();
 
     void GetLine();
