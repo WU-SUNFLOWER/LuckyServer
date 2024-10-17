@@ -22,6 +22,10 @@ public:
 
     ~HttpConnection();
 
+    const std::string &GetMethod();
+    const std::string &GetURI();
+    const std::string &GetHttpVersion();
+
     bool HasHeader(const std::string &key);
     const std::string &GetHeader(const std::string &key);
 
@@ -29,7 +33,10 @@ public:
 
     bool ParseRequestMessage();
 
+    // debug only!!!
     void PrintRequestMessage();
+
+    std::string ParseURI();
 
     void RespondSimply(const char *cause, const char *errnum, 
         const char *shortmsg, const char *longmsg);

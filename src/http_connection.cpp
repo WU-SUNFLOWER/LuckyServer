@@ -19,6 +19,21 @@ HttpConnection::~HttpConnection()
 {
 }
 
+const std::string &HttpConnection::GetMethod()
+{
+    return method_;
+}
+
+const std::string &HttpConnection::GetURI()
+{
+    return uri_;
+}
+
+const std::string &HttpConnection::GetHttpVersion()
+{
+    return http_version_;
+}
+
 bool HttpConnection::HasHeader(const std::string &key)
 {
     return headers_.find(key) != headers_.end();
@@ -89,6 +104,15 @@ void HttpConnection::PrintRequestMessage()
     for (const auto &header : headers_) {
         printf("%s: %s\n", header.first.c_str(), header.second.c_str());
     }
+}
+
+std::string HttpConnection::ParseURI()
+{
+    std::string result = '.' + uri_;
+    if (result.back() == '/') {
+        result += "index.html";
+    }
+    return result;
 }
 
 void HttpConnection::RespondSimply(const char *cause, const char *errnum, 
