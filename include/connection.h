@@ -25,7 +25,7 @@ private:
     Socket *socket_;
     Channel *channel_;
 
-    std::function<void(Socket *)> delete_connection_callback_;
+    std::function<void(Connection *)> delete_connection_callback_;
     std::function<void(Connection *)> on_connect_callback_;
 
     Buffer *send_buffer_;
@@ -60,7 +60,7 @@ public:
     //void Send();
     void Close();
 
-    void SetDeleteConnectionCallback(std::function<void(Socket *)> const &);
+    void SetDeleteConnectionCallback(std::function<void(Connection *)> const &);
 
     void SetOnConnectCallback(std::function<void(Connection *)> const &);
 };

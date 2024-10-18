@@ -15,6 +15,7 @@ private:
     std::filesystem::path work_dir_;
 
 public:
+
     explicit HttpServer(int port, const std::filesystem::path &work_dir);
 
     ~HttpServer();

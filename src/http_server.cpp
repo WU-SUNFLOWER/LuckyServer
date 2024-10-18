@@ -51,7 +51,7 @@ void HttpServer::OnConnect(Connection *conn)
     }
     // parse request header
     if (!http_conn.ParseRequestMessage()) {
-        printf("fail to parse http request message, "
+        util::DebugPrint("fail to parse http request message, "
                "so we close this connection directly!\n");
         http_conn.Close();
         return;

@@ -1,5 +1,6 @@
 #include "util.h"
 
+#include <cstdarg>
 #include <cstdio>
 #include <cstdlib>
 #include <algorithm>
@@ -7,6 +8,22 @@
 
 namespace util
 {
+
+    bool is_debugging_mode_ = false;
+
+    void SetDebuggingMode(bool flag) {
+        is_debugging_mode_ = flag;
+    }
+
+    void DebugPrint(const char *format, ...) {
+        if (is_debugging_mode_) {
+            va_list args;
+            va_start(args, format);
+            vprintf(format, args);
+            va_end(args);
+        }
+    }
+
     void PrintErrorAndExit(const char *kMsg)
     {
         perror(kMsg);

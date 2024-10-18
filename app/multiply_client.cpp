@@ -25,7 +25,7 @@ void OneClient(int msgs, int wait)
         ssize_t write_bytes = write(sockfd, send_buffer->ToStr(), send_buffer->Size());
         if (write_bytes == -1)
         {
-            printf("socket already disconnected, can't write any more!\n");
+            util::DebugPrint("socket already disconnected, can't write any more!\n");
             break;
         }
         size_t already_read = 0;
@@ -41,12 +41,12 @@ void OneClient(int msgs, int wait)
             }
             else if (read_bytes == 0)
             { // EOF
-                printf("server disconnected!\n");
+                util::DebugPrint("server disconnected!\n");
                 exit(EXIT_SUCCESS);
             }
             if (already_read >= send_buffer->Size())
             {
-                printf("count: %d, message from server: %s\n", count++, read_buffer->ToStr());
+                util::DebugPrint("count: %d, message from server: %s\n", count++, read_buffer->ToStr());
                 break;
             }
         }
@@ -62,6 +62,7 @@ int main(int argc, char *argv[])
     int wait = 0;
     int o;
     const char *optstring = "t:m:w:";
+    util::SetDebuggingMode(true);
     while ((o = getopt(argc, argv, optstring)) != -1)
     {
         switch (o)
@@ -76,8 +77,8 @@ int main(int argc, char *argv[])
             wait = std::stoi(optarg);
             break;
         case '?':
-            printf("error optopt: %c\n", optopt);
-            printf("error opterr: %d\n", opterr);
+            util::DebugPrint("error optopt: %c\n", optopt);
+            util::DebugPrint("error opterr: %d\n", opterr);
             break;
         }
     }

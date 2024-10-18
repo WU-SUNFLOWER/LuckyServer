@@ -7,14 +7,15 @@
 int main() {
 
     EventLoop loop;
-    Server server(&loop);
+    Server server(8888, &loop);
+    util::SetDebuggingMode(true);
     server.OnConnect([](Connection *conn) {
         conn->Read();
         if (conn->GetState() == Connection::State::Closed) {
             conn->Close();
             return;
         }
-        printf("message from client %d: %s\n", conn->GetSocket()->GetFd(), conn->ReadBuffer());
+        util::DebugPrint("message from client %d: %s\n", conn->GetSocket()->GetFd(), conn->ReadBuffer());
         conn->SetSendBuffer(conn->ReadBuffer());
         conn->Write();
         if (conn->GetState() == Connection::State::Closed) {

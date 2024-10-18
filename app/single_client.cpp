@@ -8,6 +8,7 @@
 
 int main()
 {
+    util::SetDebuggingMode(true);
     Socket *sock = new Socket();
     InetAddress addr("127.0.0.1", 8888);
     sock->Connect(addr);
@@ -21,11 +22,11 @@ int main()
         ssize_t write_bytes = write(sockfd, send_buffer->ToStr(), send_buffer->Size());
         if (write_bytes == -1)
         {
-            printf("socket already disconnected, can't write any more!\n");
+            util::DebugPrint("socket already disconnected, can't write any more!\n");
             break;
         }
-        int already_read = 0;
-        char buf[1024]; // ���buf��С����ν
+        size_t already_read = 0;
+        char buf[1024];
         while (true)
         {
             bzero(&buf, sizeof(buf));
@@ -37,12 +38,12 @@ int main()
             }
             else if (read_bytes == 0)
             { // EOF
-                printf("server disconnected!\n");
+                util::DebugPrint("server disconnected!\n");
                 exit(EXIT_SUCCESS);
             }
             if (already_read >= send_buffer->Size())
             {
-                printf("message from server: %s\n", read_buffer->ToStr());
+                util::DebugPrint("message from server: %s\n", read_buffer->ToStr());
                 break;
             }
         }

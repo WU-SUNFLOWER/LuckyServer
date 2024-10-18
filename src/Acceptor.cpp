@@ -1,6 +1,7 @@
 #include "acceptor.h"
 #include "socket.h"
 #include "channel.h"
+#include "server.h"
 
 Acceptor::Acceptor(int port, EventLoop *loop)
     : port_(port),
@@ -29,10 +30,10 @@ void Acceptor::AcceptConnection()
     Socket *client_socket = new Socket(socket_->Accept(client_address));
     client_socket->SetNonBlocking();
 
-    printf("New client fd %d! From IP: %s Port: %d\n",
-           client_socket->GetFd(),
-           client_address.GetIP().c_str(),
-           client_address.GetPort());
+    util::DebugPrint("New client fd %d! From IP: %s Port: %d\n",
+        client_socket->GetFd(),
+        client_address.GetIP().c_str(),
+        client_address.GetPort());
 
     if (new_connection_callback_)
     {

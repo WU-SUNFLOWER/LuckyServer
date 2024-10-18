@@ -4,6 +4,8 @@
 #include <string>
 #include <filesystem>
 
+#include "util.h"
+#include "server.h"
 #include "http_server.h"
 
 HttpServer *server = nullptr;
@@ -20,13 +22,16 @@ int main(int argc, char** argv) {
     int option = 0;
     int user_port = 8888;
     std::string user_path_str = "";
-    while ((option = getopt(argc, argv, "d:p:")) != -1) {
+    while ((option = getopt(argc, argv, "d:p:g")) != -1) {
         switch (option) {
             case 'd':
                 user_path_str = optarg;
                 break;
             case 'p':
                 user_port = std::stoi(optarg);
+                break;
+            case 'g':
+                util::SetDebuggingMode(true);
                 break;
             case '?':
                 printf("error user option: %c\n", (char)optopt);
@@ -46,6 +51,7 @@ int main(int argc, char** argv) {
 
     HttpServer *server = new HttpServer(user_port, work_dir);
     signal(SIGINT, &handle_sigint);
+    signal(SIGPIPE, SIG_IGN);
     server->Run();
     return 0;
 }

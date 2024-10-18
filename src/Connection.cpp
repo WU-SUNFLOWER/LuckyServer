@@ -26,6 +26,7 @@ Connection::Connection(EventLoop *loop, Socket *socket)
 
 Connection::~Connection()
 {
+    util::DebugPrint("delete connection, its fd is %d\n", socket_->GetFd());
     delete channel_;
     delete socket_;
     delete send_buffer_;
@@ -34,10 +35,10 @@ Connection::~Connection()
 
 void Connection::Close()
 {
-    delete_connection_callback_(socket_);
+    delete_connection_callback_(this);
 }
 
-void Connection::SetDeleteConnectionCallback(std::function<void(Socket *)> const &callback)
+void Connection::SetDeleteConnectionCallback(std::function<void(Connection *)> const &callback)
 {
     delete_connection_callback_ = callback;
 }
@@ -96,11 +97,11 @@ void Connection::ReadBlocking()
         read_buffer_->Append(buf, read_bytes);
     }
     else if (read_bytes == 0) {
-        printf("read EOF, blocking client fd %d disconnected\n", socket_fd);
+        util::DebugPrint("read EOF, blocking client fd %d disconnected\n", socket_fd);
         state_ = State::Closed;
     }
     else {
-        printf("error on read blocking client fd %d\n", socket_fd);
+        util::DebugPrint("error on read blocking client fd %d\n", socket_fd);
         state_ = State::Closed;
     }
 }
@@ -111,7 +112,7 @@ void Connection::WriteBlocking()
     ssize_t write_bytes = ::write(socket_fd, send_buffer_->ToStr(), send_buffer_->Size());
 
     if (write_bytes < 0) {
-        printf("error on write blocking client fd %d\n", socket_fd);
+        util::DebugPrint("error on write blocking client fd %d\n", socket_fd);
         state_ = State::Closed;
     }
 }
@@ -138,12 +139,12 @@ void Connection::ReadNonBlocking()
         }
         // we find EOF
         else if (read_bytes == 0) {
-            printf("read EOF, client fd %d disconnected\n", socket_fd);
+            util::DebugPrint("read EOF, client fd %d disconnected\n", socket_fd);
             state_ = State::Closed;
             break;
         }
         else {
-            printf("error on client fd %d\n", socket_fd);
+            util::DebugPrint("error on client fd %d\n", socket_fd);
             state_ = State::Closed;
             break;
         }
@@ -164,12 +165,12 @@ void Connection::WriteNonBlocking()
             continue;
         }
         // writing is finished
-        if (write_bytes == -1 && errno == EAGAIN) {
+        if (write_bytes == -1 && (errno == EAGAIN || errno == EWOULDBLOCK)) {
             break;
         }
         // error
         if (write_bytes == -1) {
-            printf("error on client fd %d\n", socket_fd);
+            util::DebugPrint("error on client fd %d\n", socket_fd);
             state_ = State::Closed;
             break;
         }

@@ -122,11 +122,11 @@ bool HttpConnection::ParseRequestMessage()
 
 void HttpConnection::PrintRequestMessage()
 {
-    printf("Method: %s\nURI: %s\nVersion: %s\n", 
+    util::DebugPrint("Method: %s\nURI: %s\nVersion: %s\n", 
         method_.c_str(), uri_.c_str(), http_version_.c_str());
-    printf("Headers:\n");
+    util::DebugPrint("Headers:\n");
     for (const auto &header : headers_) {
-        printf("%s: %s\n", header.first.c_str(), header.second.c_str());
+        util::DebugPrint("%s: %s\n", header.first.c_str(), header.second.c_str());
     }
 }
 

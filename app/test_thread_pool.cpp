@@ -12,7 +12,7 @@ void test()
     std::cout << "hellp" << std::endl;
 }
 
-int main(int argc, char const *argv[])
+int main()
 {
     ThreadPool *poll = new ThreadPool();
     std::function<void()> func = std::bind(print, 1, 3.14, "hello", std::string("world"));

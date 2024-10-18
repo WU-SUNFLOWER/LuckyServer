@@ -25,6 +25,7 @@ private:
     std::function<void(Connection*)> on_connect_callback_;
 
 public:
+
     explicit Server(int port, EventLoop *loop);
 
     ~Server();
@@ -33,7 +34,7 @@ public:
 
     void NewConnection(Socket *serv_sock);
 
-    void DeleteConnection(Socket *socket);
+    void DeleteConnection(Connection *);
 
     void OnConnect(std::function<void(Connection *)> const &fn);
 };

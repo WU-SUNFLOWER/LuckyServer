@@ -5,6 +5,8 @@
 
 namespace util
 {
+    extern void SetDebuggingMode(bool flag);
+    extern void DebugPrint(const char *format, ...);
     extern void PrintErrorAndExit(const char *kMsg);
     extern void ErrIf(bool condition, const char *kMsg);
     extern std::string &Trim(std::string &str);

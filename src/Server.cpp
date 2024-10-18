@@ -46,26 +46,18 @@ void Server::NewConnection(Socket *client_socket)
     Connection *connection = new Connection(sub_reactors_[random], client_socket);
     util::ErrIf(connection == nullptr, "new connection is nullptr");
 
-    std::function<void(Socket *)> cb = std::bind(
+    std::function<void(Connection *)> cb = std::bind(
         &Server::DeleteConnection,
         this,
         std::placeholders::_1);
 
     connection->SetOnConnectCallback(on_connect_callback_);
     connection->SetDeleteConnectionCallback(cb);
-    connections_[client_socket->GetFd()] = connection;
 }
 
-void Server::DeleteConnection(Socket *client_socket)
+void Server::DeleteConnection(Connection *conn)
 {
-    int client_fd = client_socket->GetFd();
-    util::ErrIf(client_fd == -1, "delete connection error");
-
-    Connection *connection = connections_[client_fd];
-    util::ErrIf(connection == nullptr, "connection is nullptr");
-
-    connections_.erase(client_fd);
-    delete connection;
+    delete conn;
 }
 
 void Server::OnConnect(std::function<void(Connection *)> const &fn)
