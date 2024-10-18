@@ -85,3 +85,5 @@ Here are the reference materials we used while developing *Lucky Server*. Thanks
 - https://github.com/qinguoyi/TinyWebServer
 
 - https://mp.weixin.qq.com/s/5xj42JPKG8o5T7hjXIKywg
+
+- https://hansimov.gitbook.io/csapp/part3/ch11-network-programming/11.6-putting-it-together-the-tiny-web-server
