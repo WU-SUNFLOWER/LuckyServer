@@ -11,10 +11,10 @@
 #include "thread_pool.h"
 #include "util.h"
 
-Server::Server(EventLoop *loop)
-    : main_reactor_(loop), acceptor_(nullptr), thread_pool_(nullptr)
+Server::Server(int port, EventLoop *loop)
+    : port_(port), main_reactor_(loop), acceptor_(nullptr), thread_pool_(nullptr)
 {
-    acceptor_ = new Acceptor(main_reactor_);
+    acceptor_ = new Acceptor(port_, main_reactor_);
     std::function<void(Socket *)> cb = std::bind(
         &Server::NewConnection,
         this,

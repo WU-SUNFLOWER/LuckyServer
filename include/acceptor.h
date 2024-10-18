@@ -13,6 +13,8 @@ class Acceptor
 {
 
 private:
+    int port_;
+
     EventLoop *loop_;
     Socket *socket_;
     InetAddress address_;
@@ -21,7 +23,7 @@ private:
     std::function<void(Socket *)> new_connection_callback_;
 
 public:
-    explicit Acceptor(EventLoop *loop);
+    explicit Acceptor(int port, EventLoop *loop);
 
     ~Acceptor();
 

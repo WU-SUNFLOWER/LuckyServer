@@ -25,5 +25,8 @@ namespace mysyscall
     extern int Close(int fd);
 
     extern ssize_t Write(int fd, const void *kBuf, size_t n);
+
+    extern int Chdir(const char* target_path);
+
 } // namespace mysyscall
 #endif // LUCKYSERVER_SYSCALL_H_

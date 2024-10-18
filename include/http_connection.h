@@ -43,10 +43,10 @@ public:
 
     std::string ParseURI();
 
-    void RespondSimply(const char *cause, const char *errnum, 
+    bool RespondSimply(const char *cause, const char *errnum, 
         const char *shortmsg, const char *longmsg);
 
-    void RespondStaticFile(const std::string &file_path, size_t file_size);
+    bool RespondStaticFile(const std::string &file_path, size_t file_size);
 
     void Close();
 };

@@ -10,6 +10,13 @@ namespace mysyscall
         return ret;
     }
 
+    int Chdir(const char *target_path)
+    {
+        int ret = chdir(target_path);
+        util::ErrIf(ret != 0, "chdir error");
+        return ret;
+    }
+
     int CreateSocket(int domain, int type, int protocol)
     {
         int ret = socket(domain, type, protocol);

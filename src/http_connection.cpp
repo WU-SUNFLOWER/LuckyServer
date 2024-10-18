@@ -21,6 +21,7 @@ const std::unordered_map<std::string, std::string> HttpConnection::MimeTypes = {
     {"png", "image/png"},
     {"jpeg", "image/jpeg"},
     {"jpg", "image/jpeg"},
+    {"ico", "image/x-icon"},
 };
 
 std::string HttpConnection::GetFileType(const std::string &filename)
@@ -139,13 +140,16 @@ std::string HttpConnection::ParseURI()
 }
 
 
-#define SetBufferAndSent(conn, buffer) \
-    {                                  \
-       conn->SetSendBuffer(buffer);    \
-       conn->Write();                  \
+#define SetBufferAndSent(conn, buffer)                          \
+    {                                                           \
+        conn->SetSendBuffer(buffer);                            \
+        conn->Write();                                          \
+        if (conn->GetState() == Connection::State::Closed) {    \
+            return false;                                       \
+        }                                                       \
     }
 
-void HttpConnection::RespondSimply(const char *cause, const char *errnum, 
+bool HttpConnection::RespondSimply(const char *cause, const char *errnum, 
     const char *shortmsg, const char *longmsg)
 {
     char line_buf[MAX_LINE];
@@ -171,9 +175,10 @@ void HttpConnection::RespondSimply(const char *cause, const char *errnum,
 
     SetBufferAndSent(conn_, respond_body_buf);
 
+    return true;
 }
 
-void HttpConnection::RespondStaticFile(const std::string &file_path, size_t file_size)
+bool HttpConnection::RespondStaticFile(const std::string &file_path, size_t file_size)
 {
     char line_buf[MAX_LINE];
     std::string file_type = GetFileType(file_path);
@@ -193,6 +198,8 @@ void HttpConnection::RespondStaticFile(const std::string &file_path, size_t file
     conn_->SetSendBuffer(file_src, file_size); 
     conn_->Write();
     ::munmap(file_src, file_size);
+
+    return true;
 }
 
 #undef SetBufferAndSent

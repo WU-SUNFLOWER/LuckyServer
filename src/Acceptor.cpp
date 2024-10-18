@@ -2,10 +2,11 @@
 #include "socket.h"
 #include "channel.h"
 
-Acceptor::Acceptor(EventLoop *loop)
-    : loop_(loop),
+Acceptor::Acceptor(int port, EventLoop *loop)
+    : port_(port),
+      loop_(loop),
       socket_(new Socket()),
-      address_("127.0.0.1", 8888),
+      address_("0.0.0.0", port_),
       accept_channel_(nullptr)
 {
     socket_->Bind(address_);

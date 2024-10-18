@@ -1,4 +1,4 @@
-APPS = echo_server http_server single_client multiply_client test_thread_pool
+APPS = echo_server lucky_server single_client multiply_client test_thread_pool
 
 Source_Path = src
 Include_Path = include

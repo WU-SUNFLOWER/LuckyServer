@@ -10,12 +10,20 @@
 #include "connection.h"
 #include "util.h"
 #include "http_connection.h"
+#include "syscall.h"
 
-HttpServer::HttpServer()
-    : loop_(nullptr), server_(nullptr)
+HttpServer::HttpServer(int port, const std::filesystem::path &work_dir)
+    : loop_(nullptr), server_(nullptr), work_dir_(work_dir)
 {
     loop_ = new EventLoop();
-    server_ = new Server(loop_);
+    server_ = new Server(port, loop_);
+
+    if (!std::filesystem::exists(work_dir_) || !std::filesystem::is_directory(work_dir_)) {
+        util::PrintErrorAndExit("illegal work directory!");
+        return;
+    }
+
+    mysyscall::Chdir(work_dir_.c_str());
 
     std::function<void(Connection *)> on_connect_callback = 
         std::bind(&HttpServer::OnConnect, this, std::placeholders::_1);
@@ -88,11 +96,6 @@ void HttpServer::OnConnect(Connection *conn)
 
     http_conn.RespondStaticFile(file_path, sbuf.st_size);
 
-    if (http_conn.HasHeader("connection") 
-        && http_conn.GetHeader("connection") == "close")
-    {
-        http_conn.Close();
-        return;
-    }
+    http_conn.Close();
     
 }

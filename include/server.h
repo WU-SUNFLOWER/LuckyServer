@@ -14,6 +14,8 @@ class ThreadPool;
 class Server
 {
 private:
+    int port_;
+
     EventLoop *main_reactor_;
     Acceptor *acceptor_;
     std::map<int, Connection *> connections_;
@@ -23,7 +25,7 @@ private:
     std::function<void(Connection*)> on_connect_callback_;
 
 public:
-    explicit Server(EventLoop *loop);
+    explicit Server(int port, EventLoop *loop);
 
     ~Server();
 
