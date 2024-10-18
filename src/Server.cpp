@@ -44,6 +44,7 @@ void Server::NewConnection(Socket *client_socket)
 
     int random = client_socket->GetFd() % sub_reactors_.size();
     Connection *connection = new Connection(sub_reactors_[random], client_socket);
+    util::ErrIf(connection == nullptr, "new connection is nullptr");
 
     std::function<void(Socket *)> cb = std::bind(
         &Server::DeleteConnection,

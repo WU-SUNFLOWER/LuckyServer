@@ -30,11 +30,27 @@ namespace util
         }).base(), str.end());
         return str;
     }
+
     std::string &ToLower(std::string &str)
     {
         std::transform(str.begin(), str.end(), str.begin(), [](auto ch) {
             return std::tolower(ch);
         });
         return str;
+    }
+
+    bool EndsWith(const std::string& str, const std::string &suffix) {
+        if (str.length() < suffix.length()) {
+            return false;
+        }
+        return str.compare(str.length() - suffix.length(), suffix.length(), suffix);
+    }
+
+    std::string GetFilenameSuffix(const std::string& filename) {
+        size_t pos = filename.rfind('.');
+        if (pos == std::string::npos) {
+            return "";
+        }
+        return filename.substr(pos + 1);
     }
 } // namespace util

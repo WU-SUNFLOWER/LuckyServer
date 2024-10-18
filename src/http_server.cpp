@@ -38,6 +38,7 @@ void HttpServer::OnConnect(Connection *conn)
     HttpConnection http_conn(conn);
     // read request header and body
     if (!http_conn.ReadRequestMessage()) {
+        http_conn.Close();
         return;
     }
     // parse request header
@@ -61,6 +62,7 @@ void HttpServer::OnConnect(Connection *conn)
 
     std::string file_path = http_conn.ParseURI();
     struct stat sbuf {};
+    // does the file requested exist?
     if (::stat(file_path.c_str(), &sbuf) < 0) {
         http_conn.RespondSimply(
             file_path.c_str(), 
@@ -72,8 +74,20 @@ void HttpServer::OnConnect(Connection *conn)
         return;
     }
 
-    http_conn.RespondSimply("", "200", "Successful", "Web Server is working!");
-    
+    // do we have the permission to access the file?
+    if (!(S_ISREG(sbuf.st_mode)) || !(S_IRUSR & sbuf.st_mode)) {
+        http_conn.RespondSimply(
+            file_path.c_str(), 
+            "403", 
+            "Forbidden",
+		    "Lucky Web Server couldn't read the file"
+        );
+	    http_conn.Close();
+        return;
+	}
+
+    http_conn.RespondStaticFile(file_path, sbuf.st_size);
+
     if (http_conn.HasHeader("connection") 
         && http_conn.GetHeader("connection") == "close")
     {

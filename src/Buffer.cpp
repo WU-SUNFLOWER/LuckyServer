@@ -49,6 +49,12 @@ void Buffer::SetBuf(const char *buf)
     buf_.append(buf);
 }
 
+void Buffer::SetBuf(const char *buf, size_t n)
+{
+    buf_.clear();
+    buf_.append(buf, n);
+}
+
 const std::string &Buffer::ToRaw()
 {
     return buf_;

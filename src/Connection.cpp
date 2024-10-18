@@ -182,6 +182,11 @@ void Connection::SetSendBuffer(const char *str)
     send_buffer_->SetBuf(str);
 }
 
+void Connection::SetSendBuffer(const char *str, size_t n)
+{
+    send_buffer_->SetBuf(str, n);
+}
+
 const char *Connection::ReadBuffer()
 {
     return read_buffer_->ToStr();

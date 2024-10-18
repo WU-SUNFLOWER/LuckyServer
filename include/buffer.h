@@ -26,6 +26,8 @@ public:
     void GetLine();
 
     void SetBuf(const char *buf);
+
+    void SetBuf(const char *buf, size_t n);
 };
 
 #endif // LUCKYSERVER_BUFFER_H_

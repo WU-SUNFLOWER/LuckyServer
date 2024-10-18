@@ -4,11 +4,34 @@
 #include <iostream>
 #include <cstdio>
 #include <cstring>
+#include <unistd.h>
+#include <fcntl.h>
+#include <sys/mman.h>
 
 #include "util.h"
 #include "connection.h"
 
 #define MAX_LINE 1024
+
+const std::unordered_map<std::string, std::string> HttpConnection::MimeTypes = {
+    {"html", "text/html"},
+    {"css", "text/css"},
+    {"js", "application/javascript"},
+    {"gif", "image/gif"},
+    {"png", "image/png"},
+    {"jpeg", "image/jpeg"},
+    {"jpg", "image/jpeg"},
+};
+
+std::string HttpConnection::GetFileType(const std::string &filename)
+{
+    std::string suffix = util::GetFilenameSuffix(filename);
+    auto iter = MimeTypes.find(suffix);
+    if (iter != MimeTypes.end()) {
+        return iter->second;
+    }
+    return "application/octet-stream";
+}
 
 HttpConnection::HttpConnection(Connection *conn)
     : conn_(conn)
@@ -115,17 +138,18 @@ std::string HttpConnection::ParseURI()
     return result;
 }
 
-void HttpConnection::RespondSimply(const char *cause, const char *errnum, 
-    const char *shortmsg, const char *longmsg)
-{
-    char line_buf[MAX_LINE];
-    char respond_body_buf[MAX_LINE];
 
 #define SetBufferAndSent(conn, buffer) \
     {                                  \
        conn->SetSendBuffer(buffer);    \
        conn->Write();                  \
     }
+
+void HttpConnection::RespondSimply(const char *cause, const char *errnum, 
+    const char *shortmsg, const char *longmsg)
+{
+    char line_buf[MAX_LINE];
+    char respond_body_buf[MAX_LINE];
 
     sprintf(line_buf, "HTTP/1.0 %s %s\r\n", errnum, shortmsg);
     SetBufferAndSent(conn_, line_buf);
@@ -147,9 +171,31 @@ void HttpConnection::RespondSimply(const char *cause, const char *errnum,
 
     SetBufferAndSent(conn_, respond_body_buf);
 
-#undef SetBufferAndSent
-
 }
+
+void HttpConnection::RespondStaticFile(const std::string &file_path, size_t file_size)
+{
+    char line_buf[MAX_LINE];
+    std::string file_type = GetFileType(file_path);
+
+    sprintf(line_buf, "HTTP/1.0 200 OK\r\n");
+    SetBufferAndSent(conn_, line_buf);
+    sprintf(line_buf, "Server: Lucky Web Server\r\n");
+    SetBufferAndSent(conn_, line_buf);
+    sprintf(line_buf, "Content-length: %ld\r\n", file_size);
+    SetBufferAndSent(conn_, line_buf);
+    sprintf(line_buf, "Content-type: %s\r\n\r\n", file_type.c_str());
+    SetBufferAndSent(conn_, line_buf);
+
+    int file_fd = ::open(file_path.c_str(), O_RDONLY, 0);
+    char* file_src = (char*)::mmap(0, file_size, PROT_READ, MAP_PRIVATE, file_fd, 0);
+    ::close(file_fd);
+    conn_->SetSendBuffer(file_src, file_size); 
+    conn_->Write();
+    ::munmap(file_src, file_size);
+}
+
+#undef SetBufferAndSent
 
 void HttpConnection::Close()
 {

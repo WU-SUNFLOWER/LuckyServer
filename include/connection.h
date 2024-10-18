@@ -52,6 +52,7 @@ public:
     void WriteNonBlocking();
 
     void SetSendBuffer(const char *str);
+    void SetSendBuffer(const char *str, size_t n);
 
     const char *ReadBuffer();
     const std::string &ReadRawBuffer();

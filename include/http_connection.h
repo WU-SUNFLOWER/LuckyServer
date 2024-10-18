@@ -17,7 +17,12 @@ private:
 
     std::unordered_map<std::string, std::string> headers_;
 
+    static const std::unordered_map<std::string, std::string> MimeTypes;
+
 public:
+
+    static std::string GetFileType(const std::string& filename);
+
     HttpConnection(Connection *conn);
 
     ~HttpConnection();
@@ -40,6 +45,8 @@ public:
 
     void RespondSimply(const char *cause, const char *errnum, 
         const char *shortmsg, const char *longmsg);
+
+    void RespondStaticFile(const std::string &file_path, size_t file_size);
 
     void Close();
 };
