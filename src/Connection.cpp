@@ -1,5 +1,7 @@
 #include "connection.h"
 
+#include <memory>
+
 #include "event_loop.h"
 #include "server.h"
 #include "socket.h"
@@ -21,7 +23,7 @@ Connection::Connection(EventLoop *loop, Socket *socket)
     send_buffer_ = new Buffer();
     read_buffer_ = new Buffer();
 
-    state_ = State::Connected;
+    state_ = State::kConnected;
 }
 
 Connection::~Connection()
@@ -46,9 +48,8 @@ void Connection::SetDeleteConnectionCallback(std::function<void(Connection *)> c
 void Connection::SetOnConnectCallback(std::function<void(Connection *)> const &callback)
 {
     on_connect_callback_ = callback;
-    channel_->SetReadCallback([this]() {
-        on_connect_callback_(this);
-    });
+    channel_->SetReadCallback([this]()
+                              { on_connect_callback_(this); });
 }
 
 Socket *Connection::GetSocket()
@@ -63,22 +64,29 @@ Connection::State Connection::GetState() const
 
 void Connection::Read()
 {
-    util::ErrIf(state_ != State::Connected, "connction state is disconnectied!");
+    util::ErrIf(state_ != State::kConnected, "connction state is disconnectied!");
 
     read_buffer_->Clear();
-    if (socket_->IsNonBlocking()) {
+    if (socket_->IsNonBlocking())
+    {
         ReadNonBlocking();
-    } else {
+    }
+    else
+    {
         ReadBlocking();
     }
 }
 
-void Connection::Write() {
-    util::ErrIf(state_ != State::Connected, "connction state is disconnectied!");
+void Connection::Write()
+{
+    util::ErrIf(state_ != State::kConnected, "connction state is disconnectied!");
 
-    if (socket_->IsNonBlocking()) {
+    if (socket_->IsNonBlocking())
+    {
         WriteNonBlocking();
-    } else {
+    }
+    else
+    {
         WriteBlocking();
     }
     send_buffer_->Clear();
@@ -93,16 +101,19 @@ void Connection::ReadBlocking()
 
     char buf[rcv_size];
     ssize_t read_bytes = ::read(socket_fd, buf, rcv_size);
-    if (read_bytes > 0) {
+    if (read_bytes > 0)
+    {
         read_buffer_->Append(buf, read_bytes);
     }
-    else if (read_bytes == 0) {
+    else if (read_bytes == 0)
+    {
         util::DebugPrint("read EOF, blocking client fd %d disconnected\n", socket_fd);
-        state_ = State::Closed;
+        state_ = State::kClosed;
     }
-    else {
+    else
+    {
         util::DebugPrint("error on read blocking client fd %d\n", socket_fd);
-        state_ = State::Closed;
+        state_ = State::kClosed;
     }
 }
 
@@ -111,47 +122,54 @@ void Connection::WriteBlocking()
     int socket_fd = socket_->GetFd();
     ssize_t write_bytes = ::write(socket_fd, send_buffer_->ToStr(), send_buffer_->Size());
 
-    if (write_bytes < 0) {
+    if (write_bytes < 0)
+    {
         util::DebugPrint("error on write blocking client fd %d\n", socket_fd);
-        state_ = State::Closed;
+        state_ = State::kClosed;
     }
 }
 
-void Connection::ReadNonBlocking() 
+void Connection::ReadNonBlocking()
 {
     int socket_fd = socket_->GetFd();
     char buf[TEMP_BUFFER];
 
-    while (true) {
+    while (true)
+    {
         bzero(buf, sizeof(buf));
         ssize_t read_bytes = ::read(socket_fd, buf, sizeof(buf));
-        if (read_bytes > 0) {
+        if (read_bytes > 0)
+        {
             read_buffer_->Append(buf, read_bytes);
         }
         // luckyserver is interrupted
         // we just need to continue reading!
-        else if (read_bytes == -1 && errno == EINTR) {
+        else if (read_bytes == -1 && errno == EINTR)
+        {
             continue;
         }
         // reading is finished
-        else if (read_bytes == -1 && (errno == EAGAIN || errno == EWOULDBLOCK)) {
+        else if (read_bytes == -1 && (errno == EAGAIN || errno == EWOULDBLOCK))
+        {
             break;
         }
         // we find EOF
-        else if (read_bytes == 0) {
+        else if (read_bytes == 0)
+        {
             util::DebugPrint("read EOF, client fd %d disconnected\n", socket_fd);
-            state_ = State::Closed;
+            state_ = State::kClosed;
             break;
         }
-        else {
+        else
+        {
             util::DebugPrint("error on client fd %d\n", socket_fd);
-            state_ = State::Closed;
+            state_ = State::kClosed;
             break;
         }
     }
 }
 
-void Connection::WriteNonBlocking() 
+void Connection::WriteNonBlocking()
 {
     int socket_fd = socket_->GetFd();
     const char *buf = send_buffer_->ToStr();
@@ -161,17 +179,20 @@ void Connection::WriteNonBlocking()
     {
         ssize_t write_bytes = write(socket_fd, buf + data_size - data_left, data_left);
         // continue writing...
-        if (write_bytes == -1 && errno == EINTR) {
+        if (write_bytes == -1 && errno == EINTR)
+        {
             continue;
         }
         // writing is finished
-        if (write_bytes == -1 && (errno == EAGAIN || errno == EWOULDBLOCK)) {
+        if (write_bytes == -1 && (errno == EAGAIN || errno == EWOULDBLOCK))
+        {
             break;
         }
         // error
-        if (write_bytes == -1) {
+        if (write_bytes == -1)
+        {
             util::DebugPrint("error on client fd %d\n", socket_fd);
-            state_ = State::Closed;
+            state_ = State::kClosed;
             break;
         }
         data_left -= write_bytes;
@@ -193,6 +214,7 @@ const char *Connection::ReadBuffer()
     return read_buffer_->ToStr();
 }
 
-const std::string &Connection::ReadRawBuffer() {
+const std::string &Connection::ReadRawBuffer()
+{
     return read_buffer_->ToRaw();
 }

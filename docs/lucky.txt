@@ -1,0 +1,78 @@
+valgrind --tool=memcheck --leak-check=full ./lucky_server
+==4739== Memcheck, a memory error detector
+==4739== Copyright (C) 2002-2022, and GNU GPL'd, by Julian Seward et al.
+==4739== Using Valgrind-3.22.0 and LibVEX; rerun with -h for copyright info
+==4739== Command: ./lucky_server
+==4739== 
+==4739== Thread 3:
+==4739== Invalid read of size 4
+==4739==    at 0x10FDB4: Channel::HandleEvent() (channel.cpp:34)
+==4739==    by 0x1121C8: EventLoop::Loop() (event_loop.cpp:27)
+==4739==    by 0x120374: void std::__invoke_impl<void, void (EventLoop::*&)(), EventLoop*&>(std::__invoke_memfun_deref, void (EventLoop::*&)(), EventLoop*&) (invoke.h:74)
+==4739==    by 0x11FD98: std::__invoke_result<void (EventLoop::*&)(), EventLoop*&>::type std::__invoke<void (EventLoop::*&)(), EventLoop*&>(void (EventLoop::*&)(), EventLoop*&) (invoke.h:96)
+==4739==    by 0x11F57E: void std::_Bind<void (EventLoop::*(EventLoop*))()>::__call<void, , 0ul>(std::tuple<>&&, std::_Index_tuple<0ul>) (functional:506)
+==4739==    by 0x11EB62: void std::_Bind<void (EventLoop::*(EventLoop*))()>::operator()<, void>() (functional:591)
+==4739==    by 0x11E21F: void std::__invoke_impl<void, std::_Bind<void (EventLoop::*(EventLoop*))()>&>(std::__invoke_other, std::_Bind<void (EventLoop::*(EventLoop*))()>&) (invoke.h:61)
+==4739==    by 0x11D66B: std::enable_if<is_invocable_r_v<void, std::_Bind<void (EventLoop::*(EventLoop*))()>&>, void>::type std::__invoke_r<void, std::_Bind<void (EventLoop::*(EventLoop*))()>&>(std::_Bind<void (EventLoop::*(EventLoop*))()>&) (invoke.h:111)
+==4739==    by 0x11C4F0: std::_Function_handler<void (), std::_Bind<void (EventLoop::*(EventLoop*))()> >::_M_invoke(std::_Any_data const&) (std_function.h:290)
+==4739==    by 0x10FF33: std::function<void ()>::operator()() const (std_function.h:591)
+==4739==    by 0x122F83: void std::__invoke_impl<void, std::function<void ()>&>(std::__invoke_other, std::function<void ()>&) (invoke.h:61)
+==4739==    by 0x122C13: std::__invoke_result<std::function<void ()>&>::type std::__invoke<std::function<void ()>&>(std::function<void ()>&) (invoke.h:96)
+==4739==  Address 0x4e321f0 is 16 bytes inside a block of size 88 free'd
+==4739==    at 0x484A61D: operator delete(void*, unsigned long) (in /usr/libexec/valgrind/vgpreload_memcheck-amd64-linux.so)
+==4739==    by 0x11039E: Connection::~Connection() (connection.cpp:30)
+==4739==    by 0x11906F: Server::DeleteConnection(Connection*) (server.cpp:60)
+==4739==    by 0x120790: void std::__invoke_impl<void, void (Server::*&)(Connection*), Server*&, Connection*>(std::__invoke_memfun_deref, void (Server::*&)(Connection*), Server*&, Connection*&&) (invoke.h:74)
+==4739==    by 0x12016E: std::__invoke_result<void (Server::*&)(Connection*), Server*&, Connection*>::type std::__invoke<void (Server::*&)(Connection*), Server*&, Connection*>(void (Server::*&)(Connection*), Server*&, Connection*&&) (invoke.h:96)
+==4739==    by 0x11FB4B: void std::_Bind<void (Server::*(Server*, std::_Placeholder<1>))(Connection*)>::__call<void, Connection*&&, 0ul, 1ul>(std::tuple<Connection*&&>&&, std::_Index_tuple<0ul, 1ul>) (functional:506)
+==4739==    by 0x11F231: void std::_Bind<void (Server::*(Server*, std::_Placeholder<1>))(Connection*)>::operator()<Connection*, void>(Connection*&&) (functional:591)
+==4739==    by 0x11E63E: void std::__invoke_impl<void, std::_Bind<void (Server::*(Server*, std::_Placeholder<1>))(Connection*)>&, Connection*>(std::__invoke_other, std::_Bind<void (Server::*(Server*, std::_Placeholder<1>))(Connection*)>&, Connection*&&) (invoke.h:61)
+==4739==    by 0x11DBF4: std::enable_if<is_invocable_r_v<void, std::_Bind<void (Server::*(Server*, std::_Placeholder<1>))(Connection*)>&, Connection*>, void>::type std::__invoke_r<void, std::_Bind<void (Server::*(Server*, std::_Placeholder<1>))(Connection*)>&, Connection*>(std::_Bind<void (Server::*(Server*, std::_Placeholder<1>))(Connection*)>&, Connection*&&) (invoke.h:111)
+==4739==    by 0x11CA26: std::_Function_handler<void (Connection*), std::_Bind<void (Server::*(Server*, std::_Placeholder<1>))(Connection*)> >::_M_invoke(std::_Any_data const&, Connection*&&) (std_function.h:290)
+==4739==    by 0x111062: std::function<void (Connection*)>::operator()(Connection*) const (std_function.h:591)
+==4739==    by 0x110452: Connection::Close() (connection.cpp:38)
+==4739==  Block was alloc'd at
+==4739==    at 0x4846FA3: operator new(unsigned long) (in /usr/libexec/valgrind/vgpreload_memcheck-amd64-linux.so)
+==4739==    by 0x110203: Connection::Connection(EventLoop*, Socket*) (connection.cpp:17)
+==4739==    by 0x118F00: Server::NewConnection(Socket*) (server.cpp:46)
+==4739==    by 0x1202D0: void std::__invoke_impl<void, void (Server::*&)(Socket*), Server*&, Socket*>(std::__invoke_memfun_deref, void (Server::*&)(Socket*), Server*&, Socket*&&) (invoke.h:74)
+==4739==    by 0x11FD0E: std::__invoke_result<void (Server::*&)(Socket*), Server*&, Socket*>::type std::__invoke<void (Server::*&)(Socket*), Server*&, Socket*>(void (Server::*&)(Socket*), Server*&, Socket*&&) (invoke.h:96)
+==4739==    by 0x11F507: void std::_Bind<void (Server::*(Server*, std::_Placeholder<1>))(Socket*)>::__call<void, Socket*&&, 0ul, 1ul>(std::tuple<Socket*&&>&&, std::_Index_tuple<0ul, 1ul>) (functional:506)
+==4739==    by 0x11E8FF: void std::_Bind<void (Server::*(Server*, std::_Placeholder<1>))(Socket*)>::operator()<Socket*, void>(Socket*&&) (functional:591)
+==4739==    by 0x11E072: void std::__invoke_impl<void, std::_Bind<void (Server::*(Server*, std::_Placeholder<1>))(Socket*)>&, Socket*>(std::__invoke_other, std::_Bind<void (Server::*(Server*, std::_Placeholder<1>))(Socket*)>&, Socket*&&) (invoke.h:61)
+==4739==    by 0x11D1EC: std::enable_if<is_invocable_r_v<void, std::_Bind<void (Server::*(Server*, std::_Placeholder<1>))(Socket*)>&, Socket*>, void>::type std::__invoke_r<void, std::_Bind<void (Server::*(Server*, std::_Placeholder<1>))(Socket*)>&, Socket*>(std::_Bind<void (Server::*(Server*, std::_Placeholder<1>))(Socket*)>&, Socket*&&) (invoke.h:111)
+==4739==    by 0x11C0DC: std::_Function_handler<void (Socket*), std::_Bind<void (Server::*(Server*, std::_Placeholder<1>))(Socket*)> >::_M_invoke(std::_Any_data const&, Socket*&&) (std_function.h:290)
+==4739==    by 0x10EDFC: std::function<void (Socket*)>::operator()(Socket*) const (std_function.h:591)
+==4739==    by 0x10E846: Acceptor::AcceptConnection() (acceptor.cpp:40)
+==4739== 
+^C==4739== 
+==4739== HEAP SUMMARY:
+==4739==     in use at exit: 39,878 bytes in 40 blocks
+==4739==   total heap usage: 75 allocs, 35 frees, 119,265 bytes allocated
+==4739== 
+==4739== Thread 1:
+==4739== 608 bytes in 2 blocks are possibly lost in loss record 28 of 30
+==4739==    at 0x484D953: calloc (in /usr/libexec/valgrind/vgpreload_memcheck-amd64-linux.so)
+==4739==    by 0x40145AB: calloc (rtld-malloc.h:44)
+==4739==    by 0x40145AB: allocate_dtv (dl-tls.c:370)
+==4739==    by 0x40145AB: _dl_allocate_tls (dl-tls.c:629)
+==4739==    by 0x4BB1606: allocate_stack (allocatestack.c:429)
+==4739==    by 0x4BB1606: pthread_create@@GLIBC_2.34 (pthread_create.c:655)
+==4739==    by 0x4954EB0: std::thread::_M_start_thread(std::unique_ptr<std::thread::_State, std::default_delete<std::thread::_State> >, void (*)()) (in /usr/lib/x86_64-linux-gnu/libstdc++.so.6.0.33)
+==4739==    by 0x123B8C: std::thread::thread<ThreadPool::ThreadPool(int)::{lambda()#1}, , void>(ThreadPool::ThreadPool(int)::{lambda()#1}&&) (std_thread.h:164)
+==4739==    by 0x1238EF: ThreadPool::ThreadPool(int) (thread_pool.cpp:9)
+==4739==    by 0x118B61: Server::Server(int, EventLoop*) (server.cpp:25)
+==4739==    by 0x1173C2: HttpServer::HttpServer(int, std::filesystem::__cxx11::path const&) (http_server.cpp:19)
+==4739==    by 0x126D40: main (lucky_server.cpp:52)
+==4739== 
+==4739== LEAK SUMMARY:
+==4739==    definitely lost: 0 bytes in 0 blocks
+==4739==    indirectly lost: 0 bytes in 0 blocks
+==4739==      possibly lost: 608 bytes in 2 blocks
+==4739==    still reachable: 39,270 bytes in 38 blocks
+==4739==         suppressed: 0 bytes in 0 blocks
+==4739== Reachable blocks (those to which a pointer was found) are not shown.
+==4739== To see them, rerun with: --leak-check=full --show-leak-kinds=all
+==4739== 
+==4739== For lists of detected and suppressed errors, rerun with: -s
+==4739== ERROR SUMMARY: 2 errors from 2 contexts (suppressed: 0 from 0)

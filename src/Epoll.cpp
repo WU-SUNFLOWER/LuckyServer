@@ -62,7 +62,8 @@ void Epoll::DeleteChannel(Channel *channel)
     int channel_fd = channel->GetFd();
     util::ErrIf(channel_fd == -1, "delete channel error");
 
-    if (channel->GetInEpoll()) {
+    if (channel->GetInEpoll())
+    {
         channel->SetInEpoll(false);
         mysyscall::EpollCtl(epoll_fd_, EPOLL_CTL_DEL, channel_fd, nullptr);
     }

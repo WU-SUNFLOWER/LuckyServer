@@ -1,0 +1,75 @@
+valgrind --tool=memcheck --leak-check=full ./echo_server
+==5040== Thread 3:
+==5040== Invalid read of size 4
+==5040==    at 0x10FB94: Channel::HandleEvent() (channel.cpp:34)
+==5040==    by 0x111FA8: EventLoop::Loop() (event_loop.cpp:27)
+==5040==    by 0x120154: void std::__invoke_impl<void, void (EventLoop::*&)(), EventLoop*&>(std::__invoke_memfun_deref, void (EventLoop::*&)(), EventLoop*&) (invoke.h:74)
+==5040==    by 0x11FB78: std::__invoke_result<void (EventLoop::*&)(), EventLoop*&>::type std::__invoke<void (EventLoop::*&)(), EventLoop*&>(void (EventLoop::*&)(), EventLoop*&) (invoke.h:96)
+==5040==    by 0x11F35E: void std::_Bind<void (EventLoop::*(EventLoop*))()>::__call<void, , 0ul>(std::tuple<>&&, std::_Index_tuple<0ul>) (functional:506)
+==5040==    by 0x11E942: void std::_Bind<void (EventLoop::*(EventLoop*))()>::operator()<, void>() (functional:591)
+==5040==    by 0x11DFFF: void std::__invoke_impl<void, std::_Bind<void (EventLoop::*(EventLoop*))()>&>(std::__invoke_other, std::_Bind<void (EventLoop::*(EventLoop*))()>&) (invoke.h:61)
+==5040==    by 0x11D44B: std::enable_if<is_invocable_r_v<void, std::_Bind<void (EventLoop::*(EventLoop*))()>&>, void>::type std::__invoke_r<void, std::_Bind<void (EventLoop::*(EventLoop*))()>&>(std::_Bind<void (EventLoop::*(EventLoop*))()>&) (invoke.h:111)
+==5040==    by 0x11C2D0: std::_Function_handler<void (), std::_Bind<void (EventLoop::*(EventLoop*))()> >::_M_invoke(std::_Any_data const&) (std_function.h:290)
+==5040==    by 0x10FD13: std::function<void ()>::operator()() const (std_function.h:591)
+==5040==    by 0x122D63: void std::__invoke_impl<void, std::function<void ()>&>(std::__invoke_other, std::function<void ()>&) (invoke.h:61)
+==5040==    by 0x1229F3: std::__invoke_result<std::function<void ()>&>::type std::__invoke<std::function<void ()>&>(std::function<void ()>&) (invoke.h:96)
+==5040==  Address 0x4e30f60 is 16 bytes inside a block of size 88 free'd
+==5040==    at 0x484A61D: operator delete(void*, unsigned long) (in /usr/libexec/valgrind/vgpreload_memcheck-amd64-linux.so)
+==5040==    by 0x11017E: Connection::~Connection() (connection.cpp:30)
+==5040==    by 0x118E4F: Server::DeleteConnection(Connection*) (server.cpp:60)
+==5040==    by 0x120570: void std::__invoke_impl<void, void (Server::*&)(Connection*), Server*&, Connection*>(std::__invoke_memfun_deref, void (Server::*&)(Connection*), Server*&, Connection*&&) (invoke.h:74)
+==5040==    by 0x11FF4E: std::__invoke_result<void (Server::*&)(Connection*), Server*&, Connection*>::type std::__invoke<void (Server::*&)(Connection*), Server*&, Connection*>(void (Server::*&)(Connection*), Server*&, Connection*&&) (invoke.h:96)
+==5040==    by 0x11F92B: void std::_Bind<void (Server::*(Server*, std::_Placeholder<1>))(Connection*)>::__call<void, Connection*&&, 0ul, 1ul>(std::tuple<Connection*&&>&&, std::_Index_tuple<0ul, 1ul>) (functional:506)
+==5040==    by 0x11F011: void std::_Bind<void (Server::*(Server*, std::_Placeholder<1>))(Connection*)>::operator()<Connection*, void>(Connection*&&) (functional:591)
+==5040==    by 0x11E41E: void std::__invoke_impl<void, std::_Bind<void (Server::*(Server*, std::_Placeholder<1>))(Connection*)>&, Connection*>(std::__invoke_other, std::_Bind<void (Server::*(Server*, std::_Placeholder<1>))(Connection*)>&, Connection*&&) (invoke.h:61)
+==5040==    by 0x11D9D4: std::enable_if<is_invocable_r_v<void, std::_Bind<void (Server::*(Server*, std::_Placeholder<1>))(Connection*)>&, Connection*>, void>::type std::__invoke_r<void, std::_Bind<void (Server::*(Server*, std::_Placeholder<1>))(Connection*)>&, Connection*>(std::_Bind<void (Server::*(Server*, std::_Placeholder<1>))(Connection*)>&, Connection*&&) (invoke.h:111)
+==5040==    by 0x11C806: std::_Function_handler<void (Connection*), std::_Bind<void (Server::*(Server*, std::_Placeholder<1>))(Connection*)> >::_M_invoke(std::_Any_data const&, Connection*&&) (std_function.h:290)
+==5040==    by 0x110E42: std::function<void (Connection*)>::operator()(Connection*) const (std_function.h:591)
+==5040==    by 0x110232: Connection::Close() (connection.cpp:38)
+==5040==  Block was alloc'd at
+==5040==    at 0x4846FA3: operator new(unsigned long) (in /usr/libexec/valgrind/vgpreload_memcheck-amd64-linux.so)
+==5040==    by 0x10FFE3: Connection::Connection(EventLoop*, Socket*) (connection.cpp:17)
+==5040==    by 0x118CE0: Server::NewConnection(Socket*) (server.cpp:46)
+==5040==    by 0x1200B0: void std::__invoke_impl<void, void (Server::*&)(Socket*), Server*&, Socket*>(std::__invoke_memfun_deref, void (Server::*&)(Socket*), Server*&, Socket*&&) (invoke.h:74)
+==5040==    by 0x11FAEE: std::__invoke_result<void (Server::*&)(Socket*), Server*&, Socket*>::type std::__invoke<void (Server::*&)(Socket*), Server*&, Socket*>(void (Server::*&)(Socket*), Server*&, Socket*&&) (invoke.h:96)
+==5040==    by 0x11F2E7: void std::_Bind<void (Server::*(Server*, std::_Placeholder<1>))(Socket*)>::__call<void, Socket*&&, 0ul, 1ul>(std::tuple<Socket*&&>&&, std::_Index_tuple<0ul, 1ul>) (functional:506)
+==5040==    by 0x11E6DF: void std::_Bind<void (Server::*(Server*, std::_Placeholder<1>))(Socket*)>::operator()<Socket*, void>(Socket*&&) (functional:591)
+==5040==    by 0x11DE52: void std::__invoke_impl<void, std::_Bind<void (Server::*(Server*, std::_Placeholder<1>))(Socket*)>&, Socket*>(std::__invoke_other, std::_Bind<void (Server::*(Server*, std::_Placeholder<1>))(Socket*)>&, Socket*&&) (invoke.h:61)
+==5040==    by 0x11CFCC: std::enable_if<is_invocable_r_v<void, std::_Bind<void (Server::*(Server*, std::_Placeholder<1>))(Socket*)>&, Socket*>, void>::type std::__invoke_r<void, std::_Bind<void (Server::*(Server*, std::_Placeholder<1>))(Socket*)>&, Socket*>(std::_Bind<void (Server::*(Server*, std::_Placeholder<1>))(Socket*)>&, Socket*&&) (invoke.h:111)
+==5040==    by 0x11BEBC: std::_Function_handler<void (Socket*), std::_Bind<void (Server::*(Server*, std::_Placeholder<1>))(Socket*)> >::_M_invoke(std::_Any_data const&, Socket*&&) (std_function.h:290)
+==5040==    by 0x10EBDC: std::function<void (Socket*)>::operator()(Socket*) const (std_function.h:591)
+==5040==    by 0x10E626: Acceptor::AcceptConnection() (acceptor.cpp:40)
+
+
+void Channel::HandleEvent()
+{
+    if (ready_ & (EPOLLIN | EPOLLPRI))
+    {
+        read_callback_();
+    }
+    if (ready_ & EPOLLOUT) //于channel.cpp文件的第34行。
+    {
+        write_callback_();
+    }
+}
+
+void EventLoop::Loop()
+{
+    while (!quit_)
+    {
+        std::vector<Channel *> channels = epoll_->Wait();
+        for (Channel *channel : channels)
+        {
+            channel->HandleEvent();
+        }
+    }
+}
+
+
+发生位置：在Channel::HandleEvent()函数内，位于channel.cpp文件的第34行。
+
+调用栈：该错误是在EventLoop::Loop()中被触发的，而这个函数又是在某个线程中通过std::invoke等一系列函数调用被间接调用的。
+
+已释放的内存：报告中提到，试图访问的地址0x4e30f60是已经释放的内存块中的一部分。这块内存是在Connection::~Connection()析构函数中通过operator delete被释放的，位于connection.cpp文件的第30行。该析构函数是在Server::DeleteConnection(Connection*)中被调用的。
+
+内存分配历史：出问题的内存块最初是在Connection::Connection(EventLoop*, Socket*)构造函数中分配的，位于connection.cpp文件的第17行。这个构造函数是在Server::NewConnection(Socket*)中为新连接创建Connection对象时被调用的。

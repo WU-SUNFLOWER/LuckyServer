@@ -13,7 +13,7 @@
 
 #define MAX_LINE 1024
 
-const std::unordered_map<std::string, std::string> HttpConnection::MimeTypes = {
+const std::unordered_map<std::string, std::string> HttpConnection::kMimeTypes = {
     {"html", "text/html"},
     {"css", "text/css"},
     {"js", "application/javascript"},
@@ -27,8 +27,9 @@ const std::unordered_map<std::string, std::string> HttpConnection::MimeTypes = {
 std::string HttpConnection::GetFileType(const std::string &filename)
 {
     std::string suffix = util::GetFilenameSuffix(filename);
-    auto iter = MimeTypes.find(suffix);
-    if (iter != MimeTypes.end()) {
+    auto iter = kMimeTypes.find(suffix);
+    if (iter != kMimeTypes.end())
+    {
         return iter->second;
     }
     return "application/octet-stream";
@@ -68,9 +69,11 @@ const std::string &HttpConnection::GetHeader(const std::string &key)
     return headers_[key];
 }
 
-bool HttpConnection::ReadRequestMessage() {
+bool HttpConnection::ReadRequestMessage()
+{
     conn_->Read();
-    if (conn_->GetState() == Connection::State::Closed) {
+    if (conn_->GetState() == Connection::State::kClosed)
+    {
         return false;
     }
     return true;
@@ -84,10 +87,12 @@ bool HttpConnection::ParseRequestMessage()
     // extract request line
     std::string request_line;
     std::getline(request_stream, request_line);
-    if (request_line.empty()) {
+    if (request_line.empty())
+    {
         return false;
     }
-    if (request_line.back() == '\r') {
+    if (request_line.back() == '\r')
+    {
         request_line.pop_back();
     }
 
@@ -98,17 +103,21 @@ bool HttpConnection::ParseRequestMessage()
 
     // extract and parse request header
     std::string header_line;
-    while (std::getline(request_stream, header_line) && header_line != "\r") {
+    while (std::getline(request_stream, header_line) && header_line != "\r")
+    {
         // safe check
-        if (header_line.empty()) {
+        if (header_line.empty())
+        {
             return false;
         }
-        if (header_line.back() == '\r') {
+        if (header_line.back() == '\r')
+        {
             header_line.pop_back();
         }
         // extract header key and value
         size_t colon_pos = header_line.find(':');
-        if (colon_pos == std::string::npos) {
+        if (colon_pos == std::string::npos)
+        {
             return false;
         }
         std::string key = header_line.substr(0, colon_pos);
@@ -122,10 +131,11 @@ bool HttpConnection::ParseRequestMessage()
 
 void HttpConnection::PrintRequestMessage()
 {
-    util::DebugPrint("Method: %s\nURI: %s\nVersion: %s\n", 
-        method_.c_str(), uri_.c_str(), http_version_.c_str());
+    util::DebugPrint("Method: %s\nURI: %s\nVersion: %s\n",
+                     method_.c_str(), uri_.c_str(), http_version_.c_str());
     util::DebugPrint("Headers:\n");
-    for (const auto &header : headers_) {
+    for (const auto &header : headers_)
+    {
         util::DebugPrint("%s: %s\n", header.first.c_str(), header.second.c_str());
     }
 }
@@ -133,24 +143,25 @@ void HttpConnection::PrintRequestMessage()
 std::string HttpConnection::ParseURI()
 {
     std::string result = '.' + uri_;
-    if (result.back() == '/') {
+    if (result.back() == '/')
+    {
         result += "index.html";
     }
     return result;
 }
 
-
-#define SetBufferAndSent(conn, buffer)                          \
-    {                                                           \
-        conn->SetSendBuffer(buffer);                            \
-        conn->Write();                                          \
-        if (conn->GetState() == Connection::State::Closed) {    \
-            return false;                                       \
-        }                                                       \
+#define SetBufferAndSent(conn, buffer)                     \
+    {                                                      \
+        conn->SetSendBuffer(buffer);                       \
+        conn->Write();                                     \
+        if (conn->GetState() == Connection::State::kClosed) \
+        {                                                  \
+            return false;                                  \
+        }                                                  \
     }
 
-bool HttpConnection::RespondSimply(const char *cause, const char *errnum, 
-    const char *shortmsg, const char *longmsg)
+bool HttpConnection::RespondSimply(const char *cause, const char *errnum,
+                                   const char *shortmsg, const char *longmsg)
 {
     char line_buf[MAX_LINE];
     char respond_body_buf[MAX_LINE];
@@ -160,15 +171,17 @@ bool HttpConnection::RespondSimply(const char *cause, const char *errnum,
     sprintf(line_buf, "Content-type: text/html\r\n");
     SetBufferAndSent(conn_, line_buf);
 
-    sprintf(respond_body_buf, 
-        "<html><title>Respond Simply</title>"
-        "<body bgcolor=""ffffff"">\r\n"
-        "%s: %s\r\n"
-        "<p>%s: %s\r\n"
-        "<hr><em>Lucky Web Server</em>\r\n"
-        "</body></html>\r\n",
-        errnum, shortmsg,
-        longmsg, cause);
+    sprintf(respond_body_buf,
+            "<html><title>Respond Simply</title>"
+            "<body bgcolor="
+            "ffffff"
+            ">\r\n"
+            "%s: %s\r\n"
+            "<p>%s: %s\r\n"
+            "<hr><em>Lucky Web Server</em>\r\n"
+            "</body></html>\r\n",
+            errnum, shortmsg,
+            longmsg, cause);
 
     sprintf(line_buf, "Content-Length: %ld\r\n\r\n", strlen(respond_body_buf));
     SetBufferAndSent(conn_, line_buf);
@@ -193,9 +206,9 @@ bool HttpConnection::RespondStaticFile(const std::string &file_path, size_t file
     SetBufferAndSent(conn_, line_buf);
 
     int file_fd = ::open(file_path.c_str(), O_RDONLY, 0);
-    char* file_src = (char*)::mmap(0, file_size, PROT_READ, MAP_PRIVATE, file_fd, 0);
+    char *file_src = (char *)::mmap(0, file_size, PROT_READ, MAP_PRIVATE, file_fd, 0);
     ::close(file_fd);
-    conn_->SetSendBuffer(file_src, file_size); 
+    conn_->SetSendBuffer(file_src, file_size);
     conn_->Write();
     ::munmap(file_src, file_size);
 

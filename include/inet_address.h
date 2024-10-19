@@ -39,7 +39,7 @@ public:
         return ntohs(sockaddr_.sin_port);
     }
 
-    void SetInetAddress(struct sockaddr_in &sockaddr_);
+    void SetInetAddress(const struct sockaddr_in &sockaddr_);
 };
 
 #endif // LUCKYSERVER_INETADDRESS_H_

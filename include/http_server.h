@@ -7,7 +7,7 @@ class Server;
 class EventLoop;
 class Connection;
 
-class HttpServer 
+class HttpServer
 {
 private:
     EventLoop *loop_;
@@ -15,7 +15,6 @@ private:
     std::filesystem::path work_dir_;
 
 public:
-
     explicit HttpServer(int port, const std::filesystem::path &work_dir);
 
     ~HttpServer();

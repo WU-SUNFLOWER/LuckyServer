@@ -12,12 +12,13 @@ class Buffer;
 class Connection
 {
 public:
-    enum State {
-        Invalid = 1,
-        Handshaking = 2,
-        Connected = 3,
-        Closed = 4,
-        Failed = 5,
+    enum State
+    {
+        kInvalid = 1,
+        kHandshaking = 2,
+        kConnected = 3,
+        kClosed = 4,
+        kFailed = 5,
     };
 
 private:
@@ -57,7 +58,7 @@ public:
     const char *ReadBuffer();
     const std::string &ReadRawBuffer();
 
-    //void Send();
+    // void Send();
     void Close();
 
     void SetDeleteConnectionCallback(std::function<void(Connection *)> const &);

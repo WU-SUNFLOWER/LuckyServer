@@ -17,11 +17,10 @@ private:
 
     std::unordered_map<std::string, std::string> headers_;
 
-    static const std::unordered_map<std::string, std::string> MimeTypes;
+    static const std::unordered_map<std::string, std::string> kMimeTypes;
 
 public:
-
-    static std::string GetFileType(const std::string& filename);
+    static std::string GetFileType(const std::string &filename);
 
     HttpConnection(Connection *conn);
 
@@ -43,8 +42,8 @@ public:
 
     std::string ParseURI();
 
-    bool RespondSimply(const char *cause, const char *errnum, 
-        const char *shortmsg, const char *longmsg);
+    bool RespondSimply(const char *cause, const char *errnum,
+                       const char *shortmsg, const char *longmsg);
 
     bool RespondStaticFile(const std::string &file_path, size_t file_size);
 

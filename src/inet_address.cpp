@@ -18,7 +18,7 @@ InetAddress::~InetAddress()
 {
 }
 
-void InetAddress::SetInetAddress(struct sockaddr_in &newSockAddr)
+void InetAddress::SetInetAddress(const struct sockaddr_in &newSockAddr)
 {
     sockaddr_.sin_family = newSockAddr.sin_family;
     sockaddr_.sin_addr.s_addr = newSockAddr.sin_addr.s_addr;

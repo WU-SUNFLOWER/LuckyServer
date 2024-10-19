@@ -14,29 +14,28 @@ class ThreadPool;
 class Server
 {
 private:
-    int port_;
+  int port_;
 
-    EventLoop *main_reactor_;
-    Acceptor *acceptor_;
-    std::map<int, Connection *> connections_;
-    std::vector<EventLoop *> sub_reactors_;
-    ThreadPool *thread_pool_;
+  EventLoop *main_reactor_;
+  Acceptor *acceptor_;
+  std::map<int, Connection *> connections_;
+  std::vector<EventLoop *> sub_reactors_;
+  ThreadPool *thread_pool_;
 
-    std::function<void(Connection*)> on_connect_callback_;
+  std::function<void(Connection *)> on_connect_callback_;
 
 public:
+  explicit Server(int port, EventLoop *loop);
 
-    explicit Server(int port, EventLoop *loop);
+  ~Server();
 
-    ~Server();
+  void HandleReadEvent(int);
 
-    void HandleReadEvent(int);
+  void NewConnection(Socket *serv_sock);
 
-    void NewConnection(Socket *serv_sock);
+  void DeleteConnection(Connection *);
 
-    void DeleteConnection(Connection *);
-
-    void OnConnect(std::function<void(Connection *)> const &fn);
+  void OnConnect(std::function<void(Connection *)> const &fn);
 };
 
 #endif // LUCKYSERVER_SERVER_H_

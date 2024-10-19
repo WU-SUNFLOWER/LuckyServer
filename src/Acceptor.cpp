@@ -31,9 +31,9 @@ void Acceptor::AcceptConnection()
     client_socket->SetNonBlocking();
 
     util::DebugPrint("New client fd %d! From IP: %s Port: %d\n",
-        client_socket->GetFd(),
-        client_address.GetIP().c_str(),
-        client_address.GetPort());
+                     client_socket->GetFd(),
+                     client_address.GetIP().c_str(),
+                     client_address.GetPort());
 
     if (new_connection_callback_)
     {

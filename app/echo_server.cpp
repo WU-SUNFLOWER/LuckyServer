@@ -11,14 +11,14 @@ int main() {
     util::SetDebuggingMode(true);
     server.OnConnect([](Connection *conn) {
         conn->Read();
-        if (conn->GetState() == Connection::State::Closed) {
+        if (conn->GetState() == Connection::State::kClosed) {
             conn->Close();
             return;
         }
         util::DebugPrint("message from client %d: %s\n", conn->GetSocket()->GetFd(), conn->ReadBuffer());
         conn->SetSendBuffer(conn->ReadBuffer());
         conn->Write();
-        if (conn->GetState() == Connection::State::Closed) {
+        if (conn->GetState() == Connection::State::kClosed) {
             conn->Close();
             return;
         }
