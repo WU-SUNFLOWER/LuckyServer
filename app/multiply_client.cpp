@@ -12,7 +12,7 @@ void OneClient(int msgs, int wait)
 {
     Socket *sock = new Socket();
     InetAddress addr("127.0.0.1", 8888);
-    
+
     sock->Connect(addr);
     int sockfd = sock->GetFd();
     Buffer *send_buffer = new Buffer();
@@ -53,6 +53,8 @@ void OneClient(int msgs, int wait)
         read_buffer->Clear();
     }
 
+    delete send_buffer;
+    delete read_buffer;
     delete sock;
 }
 int main(int argc, char *argv[])

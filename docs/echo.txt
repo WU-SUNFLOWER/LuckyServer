@@ -41,35 +41,27 @@ valgrind --tool=memcheck --leak-check=full ./echo_server
 ==5040==    by 0x10E626: Acceptor::AcceptConnection() (acceptor.cpp:40)
 
 
-void Channel::HandleEvent()
-{
-    if (ready_ & (EPOLLIN | EPOLLPRI))
-    {
-        read_callback_();
-    }
-    if (ready_ & EPOLLOUT) //于channel.cpp文件的第34行。
-    {
-        write_callback_();
-    }
-}
-
-void EventLoop::Loop()
-{
-    while (!quit_)
-    {
-        std::vector<Channel *> channels = epoll_->Wait();
-        for (Channel *channel : channels)
-        {
-            channel->HandleEvent();
-        }
-    }
-}
+==16790== 
+==16790== 608 bytes in 2 blocks are possibly lost in loss record 22 of 26
+==16790==    at 0x484D953: calloc (in /usr/libexec/valgrind/vgpreload_memcheck-amd64-linux.so)
+==16790==    by 0x40145AB: calloc (rtld-malloc.h:44)
+==16790==    by 0x40145AB: allocate_dtv (dl-tls.c:370)
+==16790==    by 0x40145AB: _dl_allocate_tls (dl-tls.c:629)
+==16790==    by 0x4BB1606: allocate_stack (allocatestack.c:429)
+==16790==    by 0x4BB1606: pthread_create@@GLIBC_2.34 (pthread_create.c:655)
+==16790==    by 0x4954EB0: std::thread::_M_start_thread(std::unique_ptr<std::thread::_State, std::default_delete<std::thread::_State> >, void (*)()) (in /usr/lib/x86_64-linux-gnu/libstdc++.so.6.0.33)
+==16790==    by 0x12396C: std::thread::thread<ThreadPool::ThreadPool(int)::{lambda()#1}, , void>(ThreadPool::ThreadPool(int)::{lambda()#1}&&) (std_thread.h:164)
+==16790==    by 0x1236CF: ThreadPool::ThreadPool(int) (thread_pool.cpp:9)
+==16790==    by 0x118941: Server::Server(int, EventLoop*) (Server.cpp:25)
+==16790==    by 0x12695A: main (echo_server.cpp:10)
 
 
 发生位置：在Channel::HandleEvent()函数内，位于channel.cpp文件的第34行。
 
 调用栈：该错误是在EventLoop::Loop()中被触发的，而这个函数又是在某个线程中通过std::invoke等一系列函数调用被间接调用的。
 
-已释放的内存：报告中提到，试图访问的地址0x4e30f60是已经释放的内存块中的一部分。这块内存是在Connection::~Connection()析构函数中通过operator delete被释放的，位于connection.cpp文件的第30行。该析构函数是在Server::DeleteConnection(Connection*)中被调用的。
+已释放的内存：报告中提到，试图访问的地址0x4e30f60是已经释放的内存块中的一部分。这块内存是在Connection::~Connection()析构函数中通过operator delete被释放的，
+位于connection.cpp文件的第30行。该析构函数是在Server::DeleteConnection(Connection*)中被调用的。
 
-内存分配历史：出问题的内存块最初是在Connection::Connection(EventLoop*, Socket*)构造函数中分配的，位于connection.cpp文件的第17行。这个构造函数是在Server::NewConnection(Socket*)中为新连接创建Connection对象时被调用的。
+内存分配历史：出问题的内存块最初是在Connection::Connection(EventLoop*, Socket*)构造函数中分配的，位于connection.cpp文件的第17行。
+这个构造函数是在Server::NewConnection(Socket*)中为新连接创建Connection对象时被调用的。
